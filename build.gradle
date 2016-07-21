@@ -1,0 +1,32 @@
+apply plugin: 'java'
+apply plugin:'war'
+apply plugin: 'idea'
+
+repositories {
+
+    jcenter()
+}
+
+dependencies {
+    compile group:'org.glassfish.jersey.containers',name:'jersey-container-servlet',version:'2.23.1'
+    compile group:'org.glassfish.jersey.core',name:'jersey-client',version:'2.23.1'
+    compile group:'org.glassfish.jersey.media',name:'jersey-media-json-jackson',version:'2.23.1'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+        }
+    }
+}
+
+war {
+	webInf {
+		from 'WEB-INF'
+		include '*'
+		include '**/*'
+	}
+    archivesBaseName = 'ctu'
+}
+
