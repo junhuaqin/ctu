@@ -1,9 +1,8 @@
-package com.aetherworks.example.jersey2;
+package com.qfg.ctu;
 
+import com.qfg.ctu.exception.InvalidRequestExceptionMapper;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
-
-import com.aetherworks.example.jersey2.exception.InvalidRequestExceptionMapper;
 
 /**
  * This class is specified in the <tt>web.xml</tt> file, and is used when Jersey is loaded to determine where resources

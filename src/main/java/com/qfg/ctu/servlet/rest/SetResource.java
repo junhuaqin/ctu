@@ -2,7 +2,7 @@
  * Copyright 2014, AetherWorks LLC.
  */
 
-package com.aetherworks.example.jersey2.api;
+package com.qfg.ctu.api;
 
 import java.util.Locale;
 import java.util.Set;
@@ -21,10 +21,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import com.aetherworks.example.jersey2.SetApplication;
-import com.aetherworks.example.jersey2.SetCallHandler;
-import com.aetherworks.example.jersey2.exception.InvalidRequestException;
-import com.aetherworks.example.jersey2.exception.InvalidRequestExceptionMapper;
+import com.qfg.ctu.SetApplication;
+import com.qfg.ctu.SetCallHandler;
+import com.qfg.ctu.exception.InvalidRequestException;
+import com.qfg.ctu.exception.InvalidRequestExceptionMapper;
 
 /**
  * An example API, which models some {@link Set} operations, allowing someone to add strings, and to query the state of

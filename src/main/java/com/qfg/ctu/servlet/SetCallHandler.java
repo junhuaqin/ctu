@@ -1,10 +1,10 @@
-package com.aetherworks.example.jersey2;
+package com.qfg.ctu;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import com.aetherworks.example.jersey2.api.SetResource;
-import com.aetherworks.example.jersey2.exception.InvalidRequestException;
+import com.qfg.ctu.api.SetResource;
+import com.qfg.ctu.exception.InvalidRequestException;
 
 /**
  * The internals of the application, called by the {@link SetResource} to interact with internal application state.
