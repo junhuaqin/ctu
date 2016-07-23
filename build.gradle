@@ -8,9 +8,11 @@ repositories {
 }
 
 dependencies {
-    compile group:'org.glassfish.jersey.containers',name:'jersey-container-servlet',version:'2.23.1'
-    compile group:'org.glassfish.jersey.core',name:'jersey-client',version:'2.23.1'
-    compile group:'org.glassfish.jersey.media',name:'jersey-media-json-jackson',version:'2.23.1'
+	compile("org.glassfish.jersey.containers:jersey-container-servlet:2.23.1",
+			"org.glassfish.jersey.core:jersey-client:2.23.1",
+			"org.glassfish.jersey.media:jersey-media-json-jackson:2.23.1",
+			"javax.servlet:javax.servlet-api:3.0.1",
+			"mysql:mysql-connector-java:5.1.35")
 }
 
 sourceSets {
@@ -21,12 +23,30 @@ sourceSets {
     }
 }
 
+// Define manifest
+ext.sharedManifest = manifest {
+	attributes(
+		'Modlue': "ctu",
+		'Implementation-Title': "${project.name}",
+		'Built-Date': new Date().getDateTimeString(),
+		'Built-With': "gradle-${project.getGradle().getGradleVersion()}",
+		'Created-By': 'Java ' + System.getProperty('java.version') + ' (' + System.getProperty('java.vendor') + ')'
+	)
+}
+
 war {
+	manifest = project.manifest {
+		from sharedManifest
+	}
+
 	webInf {
 		from 'WEB-INF'
 		include '*'
 		include '**/*'
 	}
-    archivesBaseName = 'ctu'
+
+	metaInf { from 'META-INF/context.xml' }
+
+	archivesBaseName = 'ctu'
 }
 

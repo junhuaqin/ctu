@@ -1,4 +1,4 @@
-package com.aetherworks.example.jersey2.exception;
+package com.qfg.ctu.exception;
 
 public class InvalidRequestException extends Exception {
 	private static final long serialVersionUID = 1L;

@@ -1,10 +1,10 @@
-package com.qfg.ctu;
+package com.qfg.ctu.servlet;
+
+import com.qfg.ctu.servlet.rest.SetResource;
+import com.qfg.ctu.exception.InvalidRequestException;
 
 import java.util.HashSet;
 import java.util.Set;
-
-import com.qfg.ctu.api.SetResource;
-import com.qfg.ctu.exception.InvalidRequestException;
 
 /**
  * The internals of the application, called by the {@link SetResource} to interact with internal application state.

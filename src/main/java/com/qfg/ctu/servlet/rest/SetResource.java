@@ -2,29 +2,23 @@
  * Copyright 2014, AetherWorks LLC.
  */
 
-package com.qfg.ctu.api;
+package com.qfg.ctu.servlet.rest;
 
-import java.util.Locale;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.qfg.ctu.servlet.SetApplication;
+import com.qfg.ctu.servlet.SetCallHandler;
+import com.qfg.ctu.exception.InvalidRequestException;
+import com.qfg.ctu.exception.InvalidRequestExceptionMapper;
 
 import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-
-import com.qfg.ctu.SetApplication;
-import com.qfg.ctu.SetCallHandler;
-import com.qfg.ctu.exception.InvalidRequestException;
-import com.qfg.ctu.exception.InvalidRequestExceptionMapper;
+import java.util.Locale;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * An example API, which models some {@link Set} operations, allowing someone to add strings, and to query the state of

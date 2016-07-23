@@ -1,11 +1,11 @@
-package com.aetherworks.example.jersey2.exception;
+package com.qfg.ctu.exception;
+
+import com.qfg.ctu.servlet.SetApplication;
+import com.qfg.ctu.servlet.rest.SetResource;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
-
-import com.aetherworks.example.jersey2.SetApplication;
-import com.aetherworks.example.jersey2.api.SetResource;
 
 /**
  * This class specifies a mapping between an internal {@link InvalidRequestException}, and the message returned to the

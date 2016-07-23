@@ -1,4 +1,4 @@
-package com.qfg.ctu;
+package com.qfg.ctu.servlet;
 
 import com.qfg.ctu.exception.InvalidRequestExceptionMapper;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
@@ -40,6 +40,6 @@ public class SetApplication extends ResourceConfig {
 		/*
 		 * Specify where resource classes are located. These are the classes that constitute the API.
 		 */
-		packages(true, "com.aetherworks.example.jersey2.api");
+		packages(true, "com.qfg.ctu.servlet.rest");
 	}
 }
