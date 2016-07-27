@@ -2,9 +2,9 @@
  * Copyright 2014, AetherWorks LLC.
  */
 
-package com.qfg.ctu.servlet.rest;
+package com.qfg.ctu.servlet.rest.resources;
 
-import com.qfg.ctu.servlet.SetApplication;
+import com.qfg.ctu.servlet.CTUApplication;
 import com.qfg.ctu.servlet.SetCallHandler;
 import com.qfg.ctu.exception.InvalidRequestException;
 import com.qfg.ctu.exception.InvalidRequestExceptionMapper;
@@ -25,7 +25,7 @@ import java.util.logging.Logger;
  * the set.
  * <p>
  * Jersey knows this is a resource class, because it is annotated with a {@link Path}, and because our
- * {@link SetApplication} has registered the package as a location for resources.
+ * {@link CTUApplication} has registered the package as a location for resources.
  * 
  * @author Angus Macdonald (amacdonald@aetherworks.com)
  */
@@ -65,7 +65,7 @@ public class SetResource {
 	 *         constructor.
 	 * @throws InvalidRequestException
 	 *         Rather than throwing a messy exception message to the caller, this is mapped to a cleaner HTTP exception,
-	 *         using the {@link InvalidRequestExceptionMapper} and a mapping specified in {@link SetApplication}.
+	 *         using the {@link InvalidRequestExceptionMapper} and a mapping specified in {@link CTUApplication}.
 	 */
 	@GET
 	@Path("/add/{value}")

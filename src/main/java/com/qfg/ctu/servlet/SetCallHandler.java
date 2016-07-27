@@ -1,6 +1,6 @@
 package com.qfg.ctu.servlet;
 
-import com.qfg.ctu.servlet.rest.SetResource;
+import com.qfg.ctu.servlet.rest.resources.SetResource;
 import com.qfg.ctu.exception.InvalidRequestException;
 
 import java.util.HashSet;

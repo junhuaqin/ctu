@@ -1,7 +1,7 @@
 package com.qfg.ctu.exception;
 
-import com.qfg.ctu.servlet.SetApplication;
-import com.qfg.ctu.servlet.rest.SetResource;
+import com.qfg.ctu.servlet.CTUApplication;
+import com.qfg.ctu.servlet.rest.resources.SetResource;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
@@ -11,7 +11,7 @@ import javax.ws.rs.ext.Provider;
  * This class specifies a mapping between an internal {@link InvalidRequestException}, and the message returned to the
  * caller of the API when that exception is thrown back to the API interface in {@link SetResource}.
  * <p>
- * The mapping between {@link InvalidRequestException} and this class is specified in {@link SetApplication}.
+ * The mapping between {@link InvalidRequestException} and this class is specified in {@link CTUApplication}.
  * 
  * @author Angus Macdonald (amacdonald@aetherworks.com)
  */
