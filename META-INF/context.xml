@@ -2,7 +2,6 @@
 
 <Context path="/ctu"
          docBase="ctu"
-         debug="5"
          reloadable="false"
          crossContext="true">
     <Resource name="jdbc/ctu"

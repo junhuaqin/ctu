@@ -1,4 +1,4 @@
-package com.qfg.ctu.exception;
+package com.qfg.ctu.servlet.rest.exception;
 
 import com.qfg.ctu.servlet.CTUApplication;
 import com.qfg.ctu.servlet.rest.resources.SetResource;
@@ -24,7 +24,7 @@ public class InvalidRequestExceptionMapper implements ExceptionMapper<InvalidReq
 	 */
 	@Override
 	public Response toResponse(final InvalidRequestException e) {
-		return Response.status(Response.Status.BAD_REQUEST).entity(ERROR_MESSAGE).build();
+		return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
 	}
 
 }

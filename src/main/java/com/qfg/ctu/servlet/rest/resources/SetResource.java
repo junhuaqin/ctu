@@ -6,8 +6,8 @@ package com.qfg.ctu.servlet.rest.resources;
 
 import com.qfg.ctu.servlet.CTUApplication;
 import com.qfg.ctu.servlet.SetCallHandler;
-import com.qfg.ctu.exception.InvalidRequestException;
-import com.qfg.ctu.exception.InvalidRequestExceptionMapper;
+import com.qfg.ctu.servlet.rest.exception.InvalidRequestException;
+import com.qfg.ctu.servlet.rest.exception.InvalidRequestExceptionMapper;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;

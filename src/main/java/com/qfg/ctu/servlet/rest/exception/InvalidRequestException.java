@@ -1,4 +1,4 @@
-package com.qfg.ctu.exception;
+package com.qfg.ctu.servlet.rest.exception;
 
 public class InvalidRequestException extends Exception {
 	private static final long serialVersionUID = 1L;

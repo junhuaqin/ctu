@@ -1,6 +1,6 @@
 package com.qfg.ctu.servlet;
 
-import com.qfg.ctu.exception.InvalidRequestExceptionMapper;
+import com.qfg.ctu.servlet.rest.exception.InvalidRequestExceptionMapper;
 import com.qfg.ctu.util.ClassUtil;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
