@@ -5,17 +5,19 @@ import com.google.gson.JsonParser;
 import com.qfg.ctu.dao.DaoFactory;
 import com.qfg.ctu.dao.ProductDao;
 import com.qfg.ctu.dao.pojo.Product;
-import com.qfg.ctu.servlet.rest.exception.InvalidRequestException;
 import com.qfg.ctu.servlet.rest.pojos.RestProduct;
 import org.jvnet.hk2.annotations.Service;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Form;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.Optional;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
+    private final static Logger LOGGER = Logger.getLogger(ProductService.class.getName());
     private static String TBH = "http://www.tbh.cn/member_api/product.php";
 
     public List<RestProduct> getAll() {
@@ -39,38 +42,29 @@ public class ProductService {
     }
 
     public RestProduct getByQR(String id) throws Exception {
-        HttpURLConnection conn = null;
-        BufferedReader in = null;
-        PrintWriter printWriter = null;
-        try{
-            URL url=new URL(TBH);
-            conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
-            conn.setDoOutput(true);
-            conn.setDoInput(true);
-            printWriter = new PrintWriter(conn.getOutputStream());
-            printWriter.write(String.format("act=get_product_by_unique_code&unique_code=%s", id));
-            printWriter.flush();
+        Form form = (new Form())
+                    .param("act", "get_product_by_unique_code")
+                    .param("unique_code", id);
 
-            in = new BufferedReader( new InputStreamReader(conn.getInputStream(),"UTF-8") );
-            JsonObject jsonObject = (new JsonParser()).parse(in).getAsJsonObject();
-            JsonObject info = jsonObject.getAsJsonObject("info");
+        Optional<Client> client = Optional.empty();
+        Optional<Response> response = Optional.empty();
+        try {
+            client = Optional.of(ClientBuilder.newClient());
+            WebTarget target = client.get().target(TBH);
+            response = Optional.of(target.request().post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED)));
 
-            return getByBarcode(info.get("product_code").getAsInt());
-        } catch (Exception ex) {
-            throw new InvalidRequestException(ex.getMessage());
-        } finally{
-            try{
-                if (null != conn) conn.disconnect();
-                if(in!=null){
-                    in.close();
-                }
-                if(printWriter!=null){
-                    printWriter.close();
-                }
-            }catch(IOException ex) {
-                ex.printStackTrace();
+            if (response.get().getStatus() != 200) {
+                throw new RuntimeException("Failed with HTTP error code : " + response.get().getStatus());
             }
+
+            String result = response.get().readEntity(String.class);
+            JsonObject jsonObject = (new JsonParser()).parse(result).getAsJsonObject();
+            JsonObject info = jsonObject.getAsJsonObject("info");
+            return getByBarcode(info.get("product_code").getAsInt());
+
+        } finally {
+            response.ifPresent(n->n.close());
+            client.ifPresent(n->n.close());
         }
     }
 }
