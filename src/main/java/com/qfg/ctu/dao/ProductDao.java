@@ -2,6 +2,7 @@ package com.qfg.ctu.dao;
 
 import com.qfg.ctu.dao.pojo.Product;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -18,7 +19,7 @@ public interface ProductDao extends GenericDao<Product, Integer> {
     void delete(Integer id);
 
     @Override
-    Product findById(Integer id);
+    Product findById(Integer id) throws SQLException;
 
     @Override
     List<Product> findAll();

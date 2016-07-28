@@ -1,6 +1,5 @@
 package com.qfg.ctu.servlet;
 
-import com.qfg.ctu.servlet.rest.exception.InvalidRequestExceptionMapper;
 import com.qfg.ctu.util.ClassUtil;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -34,14 +33,14 @@ public class CTUApplication extends ResourceConfig {
 		/*
 		 * Register the mapping between internal exceptions and their outward facing messages.
 		 */
-		register(InvalidRequestExceptionMapper.class);
+//		register(InvalidRequestExceptionMapper.class);
 
 		register(new ServiceBinder("com.qfg.ctu.servlet.rest.services"));
 
 		/*
 		 * Specify where resource classes are located. These are the classes that constitute the API.
 		 */
-		packages(true, "com.qfg.ctu.servlet.rest.resources");
+//		packages(true, "com.qfg.ctu.servlet.rest.resources");
 	}
 
 	protected static class ServiceBinder extends AbstractBinder {

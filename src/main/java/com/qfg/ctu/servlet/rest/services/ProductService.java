@@ -33,12 +33,12 @@ public class ProductService {
         return restProducts;
     }
 
-    public RestProduct getByBarcode(int id) {
+    public RestProduct getByBarcode(int id) throws Exception {
         ProductDao productDao = DaoFactory.getProductDao(null);
         return new RestProduct(productDao.findById(id));
     }
 
-    public RestProduct getByQR(String id) throws InvalidRequestException {
+    public RestProduct getByQR(String id) throws Exception {
         HttpURLConnection conn = null;
         BufferedReader in = null;
         PrintWriter printWriter = null;
@@ -56,13 +56,7 @@ public class ProductService {
             JsonObject jsonObject = (new JsonParser()).parse(in).getAsJsonObject();
             JsonObject info = jsonObject.getAsJsonObject("info");
 
-            RestProduct product = new RestProduct();
-            product.barCode = info.get("product_code").getAsInt();
-            product.title = info.get("product_name_cn").getAsString();
-            product.unitPrice = (int)(100 * info.get("unit_price").getAsFloat());
-            product.left = 0;
-
-            return product;
+            return getByBarcode(info.get("product_code").getAsInt());
         } catch (Exception ex) {
             throw new InvalidRequestException(ex.getMessage());
         } finally{

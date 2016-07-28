@@ -3,6 +3,7 @@ package com.qfg.ctu.dao;
 import com.qfg.ctu.dao.pojo.Product;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,8 +33,16 @@ public class ProductDaoImpl implements ProductDao {
     }
 
     @Override
-    public Product findById(Integer id) {
-        return null;
+    public Product findById(Integer id) throws SQLException {
+        Product product = new Product();
+        product.setBarCode(id);
+        product.setTitle("test"+id);
+        product.setUnitPrice(12350);
+        product.setStoreNum(100);
+        if (0 == id) {
+            throw new SQLException("test");
+        }
+        return product;
     }
 
     @Override

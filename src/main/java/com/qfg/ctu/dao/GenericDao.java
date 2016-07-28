@@ -1,6 +1,7 @@
 package com.qfg.ctu.dao;
 
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -14,7 +15,7 @@ public interface GenericDao<T, I extends Serializable> {
 
     <E extends I> void delete(E id);
 
-    <E extends I> T findById(E id);
+    <E extends I> T findById(E id) throws SQLException;
 
     List<T> findAll();
 

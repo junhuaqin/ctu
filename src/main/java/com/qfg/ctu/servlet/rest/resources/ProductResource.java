@@ -1,6 +1,5 @@
 package com.qfg.ctu.servlet.rest.resources;
 
-import com.qfg.ctu.servlet.rest.exception.InvalidRequestException;
 import com.qfg.ctu.servlet.rest.services.ProductService;
 
 import javax.inject.Inject;
@@ -25,21 +24,21 @@ public class ProductResource {
     @GET
 //    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll() throws InvalidRequestException {
+    public Response getAll() throws Exception {
         return Response.status(Response.Status.OK).entity(productService.getAll()).build();
     }
 
     @GET
     @Path("{id: \\d+}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getByBarcode(@PathParam("id") int id) throws InvalidRequestException {
+    public Response getByBarcode(@PathParam("id") int id) throws Exception {
         return Response.status(Response.Status.OK).entity(productService.getByBarcode(id)).build();
     }
 
     @GET
     @Path("qr/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getByQR(@PathParam("id") String id) throws InvalidRequestException {
+    public Response getByQR(@PathParam("id") String id) throws Exception {
         return Response.status(Response.Status.OK).entity(productService.getByQR(id)).build();
     }
 }
