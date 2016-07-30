@@ -4,16 +4,16 @@ package com.qfg.ctu.dao.pojo;
  * Created by rbtq on 7/26/16.
  */
 public class Product {
-    private Integer barCode;
+    private int barCode;
     private String title;
-    private Integer unitPrice; // all is real price * 100
-    private Integer storeNum;
+    private int unitPrice; // all is real price * 100
+    private int storeNum;
 
-    public Integer getBarCode() {
+    public int getBarCode() {
         return barCode;
     }
 
-    public void setBarCode(Integer barCode) {
+    public void setBarCode(int barCode) {
         this.barCode = barCode;
     }
 
@@ -25,19 +25,19 @@ public class Product {
         this.title = name;
     }
 
-    public Integer getUnitPrice() {
+    public int getUnitPrice() {
         return unitPrice;
     }
 
-    public void setUnitPrice(Integer unitPrice) {
+    public void setUnitPrice(int unitPrice) {
         this.unitPrice = unitPrice;
     }
 
-    public Integer getStoreNum() {
+    public int getStoreNum() {
         return storeNum;
     }
 
-    public void setStoreNum(Integer storeNum) {
+    public void setStoreNum(int storeNum) {
         this.storeNum = storeNum;
     }
 }

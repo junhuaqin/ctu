@@ -9,4 +9,8 @@ public class DaoFactory {
     public static ProductDao getProductDao(Connection connection) {
         return new ProductDaoImpl(connection);
     }
+
+    public static OrderDao getOrderDao(Connection connection) {
+        return new OrderDaoImpl(connection);
+    }
 }

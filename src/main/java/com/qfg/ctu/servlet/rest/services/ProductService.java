@@ -32,8 +32,7 @@ public class ProductService {
     public List<RestProduct> getAll() {
         ProductDao productDao = DaoFactory.getProductDao(null);
         List<Product> products = productDao.findAll();
-        List restProducts = products.stream().map(n->new RestProduct(n)).collect(Collectors.toList());
-        return restProducts;
+        return products.stream().map(RestProduct::new).collect(Collectors.toList());
     }
 
     public RestProduct getByBarcode(int id) throws Exception {
@@ -41,10 +40,10 @@ public class ProductService {
         return new RestProduct(productDao.findById(id));
     }
 
-    public RestProduct getByQR(String id) throws Exception {
+    private int getBarcodeFromTBH(String id) throws Exception {
         Form form = (new Form())
-                    .param("act", "get_product_by_unique_code")
-                    .param("unique_code", id);
+                .param("act", "get_product_by_unique_code")
+                .param("unique_code", id);
 
         Optional<Client> client = Optional.empty();
         Optional<Response> response = Optional.empty();
@@ -60,11 +59,19 @@ public class ProductService {
             String result = response.get().readEntity(String.class);
             JsonObject jsonObject = (new JsonParser()).parse(result).getAsJsonObject();
             JsonObject info = jsonObject.getAsJsonObject("info");
-            return getByBarcode(info.get("product_code").getAsInt());
-
+            return info.get("product_code").getAsInt();
         } finally {
-            response.ifPresent(n->n.close());
-            client.ifPresent(n->n.close());
+            response.ifPresent(Response::close);
+            client.ifPresent(Client::close);
         }
+    }
+
+    public RestProduct getByQR(String id) throws Exception {
+        return getByBarcode(getBarcodeFromTBH(id));
+    }
+
+    public RestProduct addProduct(RestProduct product) throws Exception {
+        DaoFactory.getProductDao(null).save(product.toInner());
+        return product;
     }
 }

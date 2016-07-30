@@ -35,6 +35,8 @@ public class CTUApplication extends ResourceConfig {
 		 */
 //		register(InvalidRequestExceptionMapper.class);
 
+		LOGGER.log(Level.INFO, "register ServiceBinder");
+
 		register(new ServiceBinder("com.qfg.ctu.servlet.rest.services"));
 
 		/*
@@ -52,18 +54,18 @@ public class CTUApplication extends ResourceConfig {
 
 		@Override
 		protected void configure() {
+//			bind(UserService.class).to(UserService.class);
+//			bind(OrderService.class).to(OrderService.class);
+//			bind(ProductService.class).to(ProductService.class);
+
+			LOGGER.log(Level.INFO, String.format("bind services start"));
 			List<Class<?>> classEs = ClassUtil.getClasses(this.packageName);
+			LOGGER.log(Level.INFO, String.format("bind services:%d", classEs.size()));
 			classEs.stream().filter(n->n.getAnnotation(Service.class)!=null).forEach(n->{
-                try {
-                    Class c = n;
-                    LOGGER.log(Level.INFO, String.format("bind service:%s", c.getName()));
-                    bind(c.newInstance()).to(c);
-                } catch (InstantiationException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            });
+				LOGGER.log(Level.INFO, String.format("bind service:%s", n.getName()));
+				bind(n).to(n);
+			});
+			LOGGER.log(Level.INFO, "bind services end");
 		}
 	}
 }

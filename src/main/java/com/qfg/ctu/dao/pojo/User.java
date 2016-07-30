@@ -6,16 +6,16 @@ import java.time.LocalDateTime;
  * Created by rbtq on 7/26/16.
  */
 public class User {
-    private Integer id;
+    private int id;
     private String name;
     private LocalDateTime createdAt;
     private LocalDateTime lastLoginAt;
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
