@@ -11,22 +11,22 @@ import java.util.List;
  */
 public interface OrderDao extends GenericDao<Order, Integer> {
     @Override
-    void save(Order obj);
+    void save(Order obj) throws SQLException;
 
     @Override
-    void update(Order obj);
+    void update(Order obj) throws SQLException;
 
     @Override
-    void delete(Integer id);
+    void delete(Integer id) throws SQLException;
 
     @Override
     Order findById(Integer id) throws SQLException;
 
     @Override
-    List<Order> findAll();
+    List<Order> findAll() throws SQLException;
 
-    List<Order> findAll(LocalDateTime from ,LocalDateTime to);
+    List<Order> findAll(LocalDateTime from ,LocalDateTime to) throws SQLException;
 
     @Override
-    List<Order> findByQuery(String query, Object... args);
+    List<Order> findByQuery(String query, Object... args) throws SQLException;
 }

@@ -9,15 +9,15 @@ import java.util.List;
  */
 public interface GenericDao<T, I extends Serializable> {
 
-    void save(T obj);
+    void save(T obj) throws SQLException;
 
-    void update(T obj);
+    void update(T obj) throws SQLException;
 
-    <E extends I> void delete(E id);
+    <E extends I> void delete(E id) throws SQLException;
 
     <E extends I> T findById(E id) throws SQLException;
 
-    List<T> findAll();
+    List<T> findAll() throws SQLException;
 
-    List<T> findByQuery(String query, Object... args);
+    List<T> findByQuery(String query, Object... args) throws SQLException;
 }

@@ -20,17 +20,17 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public void save(Order obj) {
+    public void save(Order obj) throws SQLException {
 
     }
 
     @Override
-    public void update(Order obj) {
+    public void update(Order obj) throws SQLException {
 
     }
 
     @Override
-    public void delete(Integer id) {
+    public void delete(Integer id) throws SQLException {
 
     }
 
@@ -40,12 +40,12 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public List<Order> findAll() {
+    public List<Order> findAll() throws SQLException {
         return null;
     }
 
     @Override
-    public List<Order> findAll(LocalDateTime from ,LocalDateTime to) {
+    public List<Order> findAll(LocalDateTime from ,LocalDateTime to) throws SQLException {
         List<Order> orders = new ArrayList<>();
         Order order = new Order();
         order.setId(1);
@@ -67,7 +67,7 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public List<Order> findByQuery(String query, Object... args) {
+    public List<Order> findByQuery(String query, Object... args) throws SQLException {
         return null;
     }
 }

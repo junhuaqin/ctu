@@ -1,6 +1,7 @@
 package com.qfg.ctu.servlet;
 
 import com.qfg.ctu.util.DbUtil;
+import com.qfg.ctu.util.Environment;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -22,6 +23,7 @@ public class Listener implements ServletContextListener {
             DbUtil.initConnectionPoolByJndi();
             if (!DbUtil.doesDbExist("ctu")) {
                 LOGGER.log(Level.WARNING, "Database doesn't exist, rebuild it");
+                (new Environment()).reBuildDB();
             }
         } catch (Exception e) {
             e.printStackTrace();

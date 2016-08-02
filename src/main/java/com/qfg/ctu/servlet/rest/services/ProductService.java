@@ -17,6 +17,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -29,7 +30,7 @@ public class ProductService {
     private final static Logger LOGGER = Logger.getLogger(ProductService.class.getName());
     private static String TBH = "http://www.tbh.cn/member_api/product.php";
 
-    public List<RestProduct> getAll() {
+    public List<RestProduct> getAll() throws Exception {
         ProductDao productDao = DaoFactory.getProductDao(null);
         List<Product> products = productDao.findAll();
         return products.stream().map(RestProduct::new).collect(Collectors.toList());
@@ -41,6 +42,8 @@ public class ProductService {
     }
 
     private int getBarcodeFromTBH(String id) throws Exception {
+        LOGGER.log(Level.INFO, String.format("Query QR:%s", id));
+
         Form form = (new Form())
                 .param("act", "get_product_by_unique_code")
                 .param("unique_code", id);
@@ -73,5 +76,9 @@ public class ProductService {
     public RestProduct addProduct(RestProduct product) throws Exception {
         DaoFactory.getProductDao(null).save(product.toInner());
         return product;
+    }
+
+    public void decreaseStore(int id, int dec) throws Exception {
+
     }
 }

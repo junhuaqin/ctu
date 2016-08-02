@@ -18,17 +18,22 @@ public class ProductDaoImpl implements ProductDao {
     }
 
     @Override
-    public void save(Product obj) {
+    public void save(Product obj) throws SQLException {
 
     }
 
     @Override
-    public void update(Product obj) {
+    public void update(Product obj) throws SQLException {
 
     }
 
     @Override
-    public void delete(Integer id) {
+    public void minusStore(Integer id, int count) throws SQLException {
+
+    }
+
+    @Override
+    public void delete(Integer id) throws SQLException {
 
     }
 
@@ -46,7 +51,7 @@ public class ProductDaoImpl implements ProductDao {
     }
 
     @Override
-    public List<Product> findAll() {
+    public List<Product> findAll() throws SQLException {
         Product product = new Product();
         product.setBarCode(12345);
         product.setTitle("test");
@@ -56,7 +61,7 @@ public class ProductDaoImpl implements ProductDao {
     }
 
     @Override
-    public List<Product> findByQuery(String query, Object... args) {
+    public List<Product> findByQuery(String query, Object... args) throws SQLException {
         return null;
     }
 }

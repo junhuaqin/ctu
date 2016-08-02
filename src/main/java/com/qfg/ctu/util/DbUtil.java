@@ -4,6 +4,8 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * Created by rbtq on 7/23/16.
@@ -55,5 +57,89 @@ public class DbUtil {
         }
 
         return count > 0;
+    }
+
+    private static void _setSingleParam(PreparedStatement pstmt, int index, Object param) throws SQLException {
+        if(param == null) {
+            pstmt.setString(index, null);
+        } else if(param instanceof Integer) {
+            pstmt.setInt(index, (Integer) param);
+        } else if(param instanceof Long) {
+            pstmt.setLong(index, (Long) param);
+        } else if(param instanceof byte[]) {
+            pstmt.setBytes(index, (byte[]) param);
+        } else {
+            pstmt.setString(index, param.toString());
+        }
+
+    }
+
+    protected static void _setParams(PreparedStatement pstmt, Object... params) throws SQLException {
+        int i = 0;
+        Object[] arr$ = params;
+        int len$ = params.length;
+
+        for(int i$ = 0; i$ < len$; ++i$) {
+            Object o = arr$[i$];
+            if(o == null) {
+                pstmt.setString(i + 1, null);
+                ++i;
+            } else {
+                int i$2;
+                int var15;
+                if(o instanceof int[]) {
+                    int[] var14 = (int[])o;
+                    var15 = var14.length;
+
+                    for(i$2 = 0; i$2 < var15; ++i$2) {
+                        int var17 = var14[i$2];
+                        pstmt.setInt(i + 1, var17);
+                        ++i;
+                    }
+                } else if(o instanceof long[]) {
+                    long[] var13 = (long[])o;
+                    var15 = var13.length;
+
+                    for(i$2 = 0; i$2 < var15; ++i$2) {
+                        long var16 = var13[i$2];
+                        pstmt.setLong(i + 1, var16);
+                        ++i;
+                    }
+                } else if(o instanceof Object[]) {
+                    Object[] var12 = (Object[])o;
+                    var15 = var12.length;
+
+                    for(i$2 = 0; i$2 < var15; ++i$2) {
+                        Object item1 = var12[i$2];
+                        _setSingleParam(pstmt, i + 1, item1);
+                        ++i;
+                    }
+                } else if(o instanceof Collection) {
+                    for(Iterator i$1 = ((Collection)o).iterator(); i$1.hasNext(); ++i) {
+                        Object item = i$1.next();
+                        _setSingleParam(pstmt, i + 1, item);
+                    }
+                } else {
+                    _setSingleParam(pstmt, i + 1, o);
+                    ++i;
+                }
+            }
+        }
+
+    }
+
+    public static int executeUpdate(Connection conn, String sql, Object... params) throws SQLException {
+        try {
+            if (conn == null) {
+                throw new SQLException("Connection object is null");
+            } else {
+                PreparedStatement preparedStatement = conn.prepareStatement(sql);
+                _setParams(preparedStatement, params);
+                return preparedStatement.executeUpdate();
+            }
+        } catch (SQLException var5) {
+            var5.printStackTrace();
+            throw var5;
+        }
     }
 }

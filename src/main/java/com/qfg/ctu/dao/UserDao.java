@@ -2,6 +2,7 @@ package com.qfg.ctu.dao;
 
 import com.qfg.ctu.dao.pojo.User;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -10,20 +11,20 @@ import java.util.List;
 public interface UserDao extends GenericDao<User, Integer>  {
 
     @Override
-    void save(User obj);
+    void save(User obj) throws SQLException;
 
     @Override
-    void update(User obj);
+    void update(User obj) throws SQLException;
 
     @Override
-    void delete(Integer id);
+    void delete(Integer id) throws SQLException;
 
     @Override
-    User findById(Integer id);
+    User findById(Integer id) throws SQLException;
 
     @Override
-    List<User> findAll();
+    List<User> findAll() throws SQLException;
 
     @Override
-    List<User> findByQuery(String query, Object... args);
+    List<User> findByQuery(String query, Object... args) throws SQLException;
 }

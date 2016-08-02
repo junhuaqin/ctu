@@ -13,6 +13,7 @@ public class RestOrder {
     public int totalPrice;
 
     public static class RestOrderItem {
+        public int barCode;
         public String title;
         public int unitPrice;
         public int count;
