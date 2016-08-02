@@ -17,6 +17,7 @@ import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -90,6 +91,9 @@ public class ProductService {
         try {
             DaoFactory.getProductDao(conn).save(product.toInner());
             return product;
+        } catch (SQLException e) {
+            DbUtil.rollbackQuietly(conn);
+            throw e;
         } finally {
             DbUtil.closeQuietly(conn);
         }
@@ -99,6 +103,9 @@ public class ProductService {
         Connection conn = DbUtil.atomicGetConnection();
         try {
             DaoFactory.getProductDao(conn).minusStore(id, dec);
+        } catch (SQLException e) {
+            DbUtil.rollbackQuietly(conn);
+            throw e;
         } finally {
             DbUtil.closeQuietly(conn);
         }
