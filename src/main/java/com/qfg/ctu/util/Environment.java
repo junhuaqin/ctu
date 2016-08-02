@@ -21,27 +21,31 @@ public class Environment {
         String line;
 
         Connection conn = DbUtil.atomicGetConnection();
-        while ((line = reader.readLine()) != null) {
-            line = StringUtil.strip(line);
-            if (line.length() == 0 || line.startsWith("--")) {
-                continue;
-            }
-
-            command += line + "\n";
-            if (line.endsWith(";")) {
-                try {
-                    DbUtil.executeUpdate(conn, command);
-                } catch (SQLException e) {
-                    LOGGER.log(Level.WARNING, "Failed to run SQL: " + command, "");
-                    throw e;
+        try {
+            while ((line = reader.readLine()) != null) {
+                line = StringUtil.strip(line);
+                if (line.length() == 0 || line.startsWith("--")) {
+                    continue;
                 }
-                command = ""; // prepare for next command
-            }
-        }
-        reader.close();
 
-        if (command.length() != 0) {
-            DbUtil.executeUpdate(conn, command);
+                command += line + "\n";
+                if (line.endsWith(";")) {
+                    try {
+                        DbUtil.executeUpdate(conn, command);
+                    } catch (SQLException e) {
+                        LOGGER.log(Level.WARNING, "Failed to run SQL: " + command, "");
+                        throw e;
+                    }
+                    command = ""; // prepare for next command
+                }
+            }
+
+            if (command.length() != 0) {
+                DbUtil.executeUpdate(conn, command);
+            }
+        } finally {
+            reader.close();
+            DbUtil.closeQuietly(conn);
         }
     }
 }

@@ -6,6 +6,7 @@ import com.qfg.ctu.dao.DaoFactory;
 import com.qfg.ctu.dao.ProductDao;
 import com.qfg.ctu.dao.pojo.Product;
 import com.qfg.ctu.servlet.rest.pojos.RestProduct;
+import com.qfg.ctu.util.DbUtil;
 import org.jvnet.hk2.annotations.Service;
 
 import javax.ws.rs.client.Client;
@@ -15,6 +16,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -31,14 +33,24 @@ public class ProductService {
     private static String TBH = "http://www.tbh.cn/member_api/product.php";
 
     public List<RestProduct> getAll() throws Exception {
-        ProductDao productDao = DaoFactory.getProductDao(null);
-        List<Product> products = productDao.findAll();
-        return products.stream().map(RestProduct::new).collect(Collectors.toList());
+        Connection conn = DbUtil.atomicGetConnection();
+        try {
+            ProductDao productDao = DaoFactory.getProductDao(conn);
+            List<Product> products = productDao.findAll();
+            return products.stream().map(RestProduct::new).collect(Collectors.toList());
+        }finally {
+            DbUtil.closeQuietly(conn);
+        }
     }
 
     public RestProduct getByBarcode(int id) throws Exception {
-        ProductDao productDao = DaoFactory.getProductDao(null);
-        return new RestProduct(productDao.findById(id));
+        Connection conn = DbUtil.atomicGetConnection();
+        try {
+            ProductDao productDao = DaoFactory.getProductDao(conn);
+            return new RestProduct(productDao.findById(id));
+        } finally {
+            DbUtil.closeQuietly(conn);
+        }
     }
 
     private int getBarcodeFromTBH(String id) throws Exception {
@@ -74,11 +86,21 @@ public class ProductService {
     }
 
     public RestProduct addProduct(RestProduct product) throws Exception {
-        DaoFactory.getProductDao(null).save(product.toInner());
-        return product;
+        Connection conn = DbUtil.atomicGetConnection();
+        try {
+            DaoFactory.getProductDao(conn).save(product.toInner());
+            return product;
+        } finally {
+            DbUtil.closeQuietly(conn);
+        }
     }
 
     public void decreaseStore(int id, int dec) throws Exception {
-
+        Connection conn = DbUtil.atomicGetConnection();
+        try {
+            DaoFactory.getProductDao(conn).minusStore(id, dec);
+        } finally {
+            DbUtil.closeQuietly(conn);
+        }
     }
 }

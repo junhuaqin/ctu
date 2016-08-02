@@ -6,11 +6,14 @@ import javax.sql.DataSource;
 import java.sql.*;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by rbtq on 7/23/16.
  */
 public class DbUtil {
+    private final static Logger LOGGER = Logger.getLogger(DbUtil.class.getName());
     public static final String MYSQL_JNDI_REF = "java:/comp/env/jdbc/ctu";
     protected static DataSource _ds;
 
@@ -31,7 +34,7 @@ public class DbUtil {
         }
     }
 
-    protected static Connection atomicGetConnection() throws SQLException {
+    public static Connection atomicGetConnection() throws SQLException {
         Connection conn = _ds.getConnection();
         if(conn == null) {
             throw new SQLException("Unable to get DB connection");
@@ -57,6 +60,67 @@ public class DbUtil {
         }
 
         return count > 0;
+    }
+
+
+    public static void closeQuietly(Connection conn) {
+        if(conn != null) {
+            try {
+                if(!conn.getAutoCommit()) {
+                    conn.setAutoCommit(true);
+                }
+            } catch (SQLException var3) {
+                ;
+            }
+
+            try {
+                conn.close();
+            } catch (Exception var2) {
+                ;
+            }
+        }
+
+    }
+
+    public static void closeQuietly(QueryResource qrs) {
+        if(qrs != null) {
+            closeQuietly(qrs.pstmt);
+            closeQuietly(qrs.rs);
+        }
+
+    }
+
+    private static void closeQuietly(Statement stmt) {
+        try {
+            if(stmt != null) {
+                stmt.close();
+            }
+        } catch (SQLException var2) {
+            ;
+        }
+
+    }
+
+    private static void closeQuietly(ResultSet rs) {
+        try {
+            if(rs != null) {
+                rs.close();
+            }
+        } catch (SQLException var2) {
+            ;
+        }
+
+    }
+
+    public static void rollbackQuietly(Connection conn) {
+        if(conn != null) {
+            try {
+                conn.rollback();
+            } catch (Exception var2) {
+                ;
+            }
+        }
+
     }
 
     private static void _setSingleParam(PreparedStatement pstmt, int index, Object param) throws SQLException {
@@ -128,18 +192,56 @@ public class DbUtil {
 
     }
 
-    public static int executeUpdate(Connection conn, String sql, Object... params) throws SQLException {
+    public static QueryResource executeUpdate(Connection conn, String sql, Object... params) throws SQLException {
+        QueryResource qrs = new QueryResource();
+
         try {
-            if (conn == null) {
+            if(conn == null) {
                 throw new SQLException("Connection object is null");
             } else {
-                PreparedStatement preparedStatement = conn.prepareStatement(sql);
-                _setParams(preparedStatement, params);
-                return preparedStatement.executeUpdate();
+                qrs.pstmt = conn.prepareStatement(sql);
+                _setParams(qrs.pstmt, params);
+                qrs.rt = qrs.pstmt.executeUpdate();
+                return qrs;
             }
-        } catch (SQLException var5) {
-            var5.printStackTrace();
-            throw var5;
+        } catch (SQLException e) {
+            LOGGER.log(Level.WARNING, String.format("sql=%s, err:%s", sql, e.getMessage()));
+            throw e;
+        }
+    }
+
+    public static QueryResource executeQuery(Connection conn, String sql, Object... params) throws SQLException {
+        QueryResource qrs = new QueryResource();
+
+        try {
+            if(conn == null) {
+                throw new SQLException("Connection object is null");
+            } else {
+                qrs.pstmt = conn.prepareStatement(sql);
+                _setParams(qrs.pstmt, params);
+                qrs.rs = qrs.pstmt.executeQuery();
+                return qrs;
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.WARNING, String.format("sql=%s, err:%s", sql, e.getMessage()));
+            throw e;
+        }
+    }
+
+    public static boolean next(QueryResource qrs) throws SQLException {
+        if ((qrs != null) && (qrs.rs != null)) {
+            return qrs.rs.next();
+        } else {
+            throw new SQLException("SQL Error, Null ResordSet");
+        }
+    }
+
+    public static class QueryResource {
+        public PreparedStatement pstmt = null;
+        public ResultSet rs = null;
+        public int rt = 0;
+
+        public QueryResource() {
         }
     }
 }
