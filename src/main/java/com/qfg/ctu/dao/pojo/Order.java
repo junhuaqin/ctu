@@ -1,6 +1,7 @@
 package com.qfg.ctu.dao.pojo;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,9 +15,18 @@ public class Order {
     private int totalPrice;
 
     public static class OrderItem {
+        private int barCode;
         private String title;
         private int unitPrice;
         private int count;
+
+        public int getBarCode() {
+            return barCode;
+        }
+
+        public void setBarCode(int barCode) {
+            this.barCode = barCode;
+        }
 
         public String getTitle() {
             return title;
@@ -73,6 +83,14 @@ public class Order {
 
     public void setItems(List<OrderItem> items) {
         this.items = items;
+    }
+
+    public void addItem(OrderItem item) {
+        if (null == this.items) {
+            this.items = new ArrayList<>();
+        }
+
+        this.items.add(item);
     }
 
     public int getTotalPrice() {

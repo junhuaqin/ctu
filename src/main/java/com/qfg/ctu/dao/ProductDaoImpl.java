@@ -22,7 +22,7 @@ public class ProductDaoImpl extends AbstractDao<Product> implements ProductDao {
 
     @Override
     public void save(Product obj) throws SQLException {
-        _update(connection, String.format("INSERT INTO %s (id, title, unitPrice, store) VALUES (?, ?, ?, ?)"),
+        _update(connection, String.format("INSERT INTO %s (id, title, unitPrice, store) VALUES (?, ?, ?, ?)", _tblName),
                 obj.getBarCode(), obj.getTitle(), obj.getUnitPrice(), obj.getStoreNum());
     }
 

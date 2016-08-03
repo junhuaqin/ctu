@@ -29,6 +29,36 @@ public abstract class AbstractDao<T> {
         }
     }
 
+    protected Long _getLong(Connection conn, String sql, Object... params) throws SQLException {
+        DbUtil.QueryResource qrs = null;
+
+        try {
+            qrs = DbUtil.executeQuery(conn, sql, params);
+            if(DbUtil.next(qrs)) {
+                return qrs.rs.getLong(0);
+            } else {
+                return null;
+            }
+        } finally {
+            DbUtil.closeQuietly(qrs);
+        }
+    }
+
+    protected Integer _getLastId(Connection conn) throws SQLException {
+        DbUtil.QueryResource qrs = null;
+
+        try {
+            qrs = DbUtil.executeQuery(conn, "SELECT last_insert_id()");
+            if(DbUtil.next(qrs)) {
+                return qrs.rs.getInt(0);
+            } else {
+                return null;
+            }
+        } finally {
+            DbUtil.closeQuietly(qrs);
+        }
+    }
+
     protected List<T> _getArray(Connection conn, String sql, Object... params) throws SQLException {
         DbUtil.QueryResource qrs = null;
 

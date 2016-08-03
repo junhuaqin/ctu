@@ -1,13 +1,17 @@
 package com.qfg.ctu.servlet;
 
+import com.qfg.ctu.proxy.DBProxyHandler;
 import com.qfg.ctu.util.ClassUtil;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.jvnet.hk2.annotations.Service;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Proxy;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 
 /**
  * This class is specified in the <tt>web.xml</tt> file, and is used when Jersey is loaded to determine where resources
@@ -56,14 +60,27 @@ public class CTUApplication extends ResourceConfig {
 		protected void configure() {
 //			bind(UserService.class).to(UserService.class);
 //			bind(OrderService.class).to(OrderService.class);
-//			bind(ProductService.class).to(ProductService.class);
+//			bind(ProductServiceImpl.class).to(ProductServiceImpl.class);
 
 			LOGGER.log(Level.INFO, String.format("bind services start"));
 			List<Class<?>> classEs = ClassUtil.getClasses(this.packageName);
 			LOGGER.log(Level.INFO, String.format("bind services:%d", classEs.size()));
 			classEs.stream().filter(n->n.getAnnotation(Service.class)!=null).forEach(n->{
 				LOGGER.log(Level.INFO, String.format("bind service:%s", n.getName()));
-				bind(n).to(n);
+
+				Service service = n.getAnnotation(Service.class);
+				Class c = null;
+				try {
+					c = n.getClassLoader().loadClass(service.name());
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+					LOGGER.log(Level.WARNING, String.format("failed to load class:%s", service.name()));
+					return;
+				}
+
+				InvocationHandler ih= new DBProxyHandler(c);//代理实例的调用处理程序。
+				Object object = Proxy.newProxyInstance(c.getClassLoader(), c.getInterfaces(), ih);
+				bind(((Class) n).cast(object)).to((Class) n);
 			});
 			LOGGER.log(Level.INFO, "bind services end");
 		}

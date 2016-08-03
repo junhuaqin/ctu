@@ -4,6 +4,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.logging.Level;
@@ -132,6 +133,8 @@ public class DbUtil {
             pstmt.setLong(index, (Long) param);
         } else if(param instanceof byte[]) {
             pstmt.setBytes(index, (byte[]) param);
+        } else if(param instanceof LocalDateTime){
+            pstmt.setTimestamp(index, new Timestamp(((LocalDateTime)param).toInstant(Constant.BEIJING_ZONE).toEpochMilli()));
         } else {
             pstmt.setString(index, param.toString());
         }

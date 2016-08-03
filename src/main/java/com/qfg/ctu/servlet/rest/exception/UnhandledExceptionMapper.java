@@ -27,6 +27,7 @@ public class UnhandledExceptionMapper implements ExceptionMapper<Throwable> {
             errMsg = "unknown error:" + t.getMessage();
         }
 
+        t.printStackTrace();
         return Response.status(Response.Status.BAD_REQUEST).entity(errMsg).build();
     }
 }

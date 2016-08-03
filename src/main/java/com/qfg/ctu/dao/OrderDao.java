@@ -27,6 +27,8 @@ public interface OrderDao extends GenericDao<Order, Integer> {
 
     List<Order> findAll(LocalDateTime from ,LocalDateTime to) throws SQLException;
 
+    Long getTotalPrice(LocalDateTime from ,LocalDateTime to) throws SQLException;
+
     @Override
     List<Order> findByQuery(String query, Object... args) throws SQLException;
 }
