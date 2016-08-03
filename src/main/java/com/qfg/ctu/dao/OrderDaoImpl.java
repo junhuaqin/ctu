@@ -3,6 +3,7 @@ package com.qfg.ctu.dao;
 import com.qfg.ctu.dao.pojo.Order;
 import com.qfg.ctu.dao.pojo.OrderJoinItem;
 import com.qfg.ctu.util.Constant;
+import com.qfg.ctu.util.DateTimeUtil;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -27,9 +28,10 @@ public class OrderDaoImpl extends AbstractDao<OrderJoinItem> implements OrderDao
 
     @Override
     public void save(Order obj) throws SQLException {
-        _update(connection, String.format("INSERT INTO %s (sale, totalPrice) VALUES (?, ?)", _tblOrdersName),
-                obj.getSale(), obj.getTotalPrice());
+        _update(connection, String.format("INSERT INTO %s (sale, totalPrice, createdOn) VALUES (?, ?)", _tblOrdersName),
+                obj.getSale(), obj.getTotalPrice(), obj.getCreatedAt());
         obj.setId(_getLastId(connection));
+
         for (Order.OrderItem item : obj.getItems()) {
             _update(connection, String.format("INSERT INTO %s (order_id, product_id, unitPrice, sale_count) VALUES (?,?,?,?)", _tblOrderItemName),
                     obj.getId(), item.getBarCode(), item.getUnitPrice(), item.getCount());
@@ -62,6 +64,20 @@ public class OrderDaoImpl extends AbstractDao<OrderJoinItem> implements OrderDao
         return order;
     }
 
+    private List<Order> mapOrderJoinItems2Orders(List<OrderJoinItem> orderJoinItems) {
+        Map<Integer, Order> orderMap = new HashMap<>();
+        orderJoinItems.stream().map(this::mapOrderJoinItem2Order)
+                .forEach(n->{
+                    if (orderMap.containsKey(n.getId())) {
+                        orderMap.get(n.getId()).addItem(n.getItems().get(0));
+                    } else {
+                        orderMap.put(n.getId(), n);
+                    }
+                });
+
+        return orderMap.values().stream().collect(Collectors.toList());
+    }
+
     @Override
     public Order findById(Integer id) throws SQLException {
         List<OrderJoinItem> orderJoinItems = _getArray(connection, _sqlSelect+ "AND id=?", id);
@@ -69,33 +85,21 @@ public class OrderDaoImpl extends AbstractDao<OrderJoinItem> implements OrderDao
             return null;
         }
 
-        Order order = mapOrderJoinItem2Order(orderJoinItems.get(0));
-        for (OrderJoinItem item : orderJoinItems) {
-            order.addItem(mapOrderJoinItem2Order(item).getItems().get(0));
-        }
-
-        return order;
+        return mapOrderJoinItems2Orders(orderJoinItems).get(0);
     }
 
     @Override
     public List<Order> findAll() throws SQLException {
-        return null;
+        throw new SQLException("Not support to get all orders");
     }
 
     @Override
-    public List<Order> findAll(LocalDateTime from ,LocalDateTime to) throws SQLException {
-        Map<Integer, Order> orderMap = new HashMap<>();
-        List<OrderJoinItem> orderJoinItems = _getArray(connection, _sqlSelect);
-        orderJoinItems.stream().map(this::mapOrderJoinItem2Order)
-                                .forEach(n->{
-            if (orderMap.containsKey(n.getId())) {
-                orderMap.get(n.getId()).addItem(n.getItems().get(0));
-            } else {
-                orderMap.put(n.getId(), n);
-            }
-        });
+    public List<Order> findAll(LocalDateTime from, LocalDateTime to) throws SQLException {
+        List<OrderJoinItem> orderJoinItems = _getArray(connection,
+                                            String.format("%s AND a.createdOn>=? AND a.createdOn <=?", _sqlSelect),
+                                            from, to);
 
-        return orderMap.values().stream().collect(Collectors.toList());
+        return mapOrderJoinItems2Orders(orderJoinItems);
     }
 
     @Override
@@ -107,7 +111,7 @@ public class OrderDaoImpl extends AbstractDao<OrderJoinItem> implements OrderDao
 
     @Override
     public List<Order> findByQuery(String query, Object... args) throws SQLException {
-        return null;
+        return mapOrderJoinItems2Orders(_getArray(connection, _sqlSelect + query, args));
     }
 
     @Override
@@ -116,7 +120,7 @@ public class OrderDaoImpl extends AbstractDao<OrderJoinItem> implements OrderDao
         item.setId(qrs.getInt("id"));
         item.setSale(qrs.getInt("sale"));
         item.setTotalPrice(qrs.getInt("totalPrice"));
-        item.setCreatedAt(LocalDateTime.ofEpochSecond(qrs.getTimestamp("createdOn").getTime()/1000, 0, Constant.BEIJING_ZONE));
+        item.setCreatedAt(DateTimeUtil.mapTimestamp2LocalDateTime(qrs.getTimestamp("createdOn")));
 
         item.setBarCode(qrs.getInt("product_id"));
         item.setTitle(qrs.getString("title"));

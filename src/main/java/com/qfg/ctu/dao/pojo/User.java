@@ -7,9 +7,14 @@ import java.time.LocalDateTime;
  */
 public class User {
     private int id;
-    private String name;
+    private String name; //display name
+    private String userName;
+    private String password;
     private LocalDateTime createdAt;
     private LocalDateTime lastLoginAt;
+    private String token;
+    private boolean active;
+    private int role;
 
     public int getId() {
         return id;
@@ -27,6 +32,22 @@ public class User {
         this.name = name;
     }
 
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -41,5 +62,29 @@ public class User {
 
     public void setLastLoginAt(LocalDateTime lastLoginAt) {
         this.lastLoginAt = lastLoginAt;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public int getRole() {
+        return role;
+    }
+
+    public void setRole(int role) {
+        this.role = role;
     }
 }

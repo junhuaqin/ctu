@@ -27,7 +27,7 @@ public class UserResource {
     @GET
     @Path("{id: \\d+}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getByBarcode(@PathParam("id") int id) throws Exception {
+    public Response getById(@PathParam("id") int id) throws Exception {
         return Response.status(Response.Status.OK).entity(userService.getById(id)).build();
     }
 }

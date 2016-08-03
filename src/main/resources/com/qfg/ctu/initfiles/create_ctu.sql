@@ -23,7 +23,7 @@ create table accounts
     token varchar(256),
     active TINYINT not null default 1,
     role_id int not null,
-    foreign key (role_id) references roles(id)
+    foreign key (role_id) references roles(id) ON DELETE restrict
 ) ENGINE=INNODB;
 
 create table products
