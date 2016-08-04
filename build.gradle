@@ -13,7 +13,8 @@ dependencies {
 			"org.glassfish.jersey.media:jersey-media-json-jackson:2.23.1",
 			"javax.servlet:javax.servlet-api:3.0.1",
 			"mysql:mysql-connector-java:5.1.35",
-			"com.google.code.gson:gson:2.7")
+			"com.google.code.gson:gson:2.7",
+			"net.sourceforge.jexcelapi:jxl:2.6.12")
 
 	// Definition provided runtime
 	providedRuntime(

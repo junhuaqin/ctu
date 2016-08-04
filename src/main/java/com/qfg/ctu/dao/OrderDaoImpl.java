@@ -28,7 +28,7 @@ public class OrderDaoImpl extends AbstractDao<OrderJoinItem> implements OrderDao
 
     @Override
     public void save(Order obj) throws SQLException {
-        _update(connection, String.format("INSERT INTO %s (sale, totalPrice, createdOn) VALUES (?, ?)", _tblOrdersName),
+        _update(connection, String.format("INSERT INTO %s (sale, totalPrice, createdOn) VALUES (?,?,?)", _tblOrdersName),
                 obj.getSale(), obj.getTotalPrice(), obj.getCreatedAt());
         obj.setId(_getLastId(connection));
 
@@ -53,6 +53,7 @@ public class OrderDaoImpl extends AbstractDao<OrderJoinItem> implements OrderDao
         order.setId(n.getId());
         order.setCreatedAt(n.getCreatedAt());
         order.setSale(n.getSale());
+        order.setTotalPrice(n.getTotalPrice());
 
         Order.OrderItem item = new Order.OrderItem();
         item.setCount(n.getCount());

@@ -16,7 +16,7 @@ public class Environment {
 
     public void reBuildDB() throws Exception {
         InputStream is = this.getClass().getResourceAsStream("/com/qfg/ctu/initfiles/create_ctu.sql");
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
         String command = "";
         String line;
 
@@ -33,7 +33,7 @@ public class Environment {
                     try {
                         DbUtil.executeUpdate(conn, command);
                     } catch (SQLException e) {
-                        LOGGER.log(Level.WARNING, "Failed to run SQL: " + command, "");
+                        LOGGER.log(Level.WARNING, "Failed to run SQL: " + command);
                         throw e;
                     }
                     command = ""; // prepare for next command

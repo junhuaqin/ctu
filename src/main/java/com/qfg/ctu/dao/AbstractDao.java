@@ -35,7 +35,7 @@ public abstract class AbstractDao<T> {
         try {
             qrs = DbUtil.executeQuery(conn, sql, params);
             if(DbUtil.next(qrs)) {
-                return qrs.rs.getLong(0);
+                return qrs.rs.getLong(1);
             } else {
                 return null;
             }
@@ -50,7 +50,7 @@ public abstract class AbstractDao<T> {
         try {
             qrs = DbUtil.executeQuery(conn, "SELECT last_insert_id()");
             if(DbUtil.next(qrs)) {
-                return qrs.rs.getInt(0);
+                return qrs.rs.getInt(1);
             } else {
                 return null;
             }

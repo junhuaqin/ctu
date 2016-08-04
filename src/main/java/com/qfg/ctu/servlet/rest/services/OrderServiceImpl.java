@@ -33,7 +33,7 @@ public class OrderServiceImpl implements OrderService {
         restOrder.totalPrice = order.getTotalPrice();
         restOrder.createdAt = DateTimeUtil.getMilli(order.getCreatedAt());
         try {
-            restOrder.sale = DaoFactory.getUserDao(null).findById(order.getSale()).getName();
+            restOrder.sale = DaoFactory.getUserDao(conn).findById(order.getSale()).getName();
         } catch (Exception e) {
             e.printStackTrace();
             restOrder.sale = "unknown";
@@ -99,6 +99,7 @@ public class OrderServiceImpl implements OrderService {
             productDao.minusStore(item.barCode, item.count);
         }
 
+        restOrder.id = order.getId();
         restOrder.createdAt = DateTimeUtil.getMilli(order.getCreatedAt());
 
         return restOrder;

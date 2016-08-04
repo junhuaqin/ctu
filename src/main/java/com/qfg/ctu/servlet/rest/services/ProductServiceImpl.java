@@ -7,6 +7,8 @@ import com.qfg.ctu.dao.DaoFactory;
 import com.qfg.ctu.dao.ProductDao;
 import com.qfg.ctu.dao.pojo.Product;
 import com.qfg.ctu.servlet.rest.pojos.RestProduct;
+import jxl.Sheet;
+import jxl.Workbook;
 
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
@@ -16,6 +18,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
@@ -96,5 +99,24 @@ public class ProductServiceImpl implements ProductService {
     @NeedDB
     public void decreaseStore(Integer id, Integer dec) throws Exception {
         DaoFactory.getProductDao(conn).minusStore(id, dec);
+    }
+
+    @Override
+    public void importProducts(InputStream is) throws Exception {
+        Workbook rwb= Workbook.getWorkbook(is);
+        Sheet rs=rwb.getSheet(0);
+        int cols=rs.getColumns();
+        int rows=rs.getRows();
+
+        for (int i = 1; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                String id=rs.getCell(j++, i).getContents();
+                String name=rs.getCell(j++, i).getContents();
+                String sex=rs.getCell(j++, i).getContents();
+                String num=rs.getCell(j++, i).getContents();
+
+                System.out.println("id:"+id+" name:"+name+" sex:"+sex+" num:"+num);
+            }
+        }
     }
 }

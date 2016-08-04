@@ -48,6 +48,15 @@ public class DbUtil {
         }
     }
 
+    public static Connection getConnection() throws SQLException {
+        Connection conn = _ds.getConnection();
+        if(conn == null) {
+            throw new SQLException("Unable to get DB connection");
+        }
+
+        return conn;
+    }
+
     public static boolean doesDbExist(String dbName) throws SQLException {
         int count = 0;
 
@@ -134,7 +143,7 @@ public class DbUtil {
         } else if(param instanceof byte[]) {
             pstmt.setBytes(index, (byte[]) param);
         } else if(param instanceof LocalDateTime){
-            pstmt.setTimestamp(index, new Timestamp(((LocalDateTime)param).toInstant(Constant.BEIJING_ZONE).toEpochMilli()));
+            pstmt.setTimestamp(index, DateTimeUtil.mapLocalDateTime2Timestamp((LocalDateTime)param));
         } else {
             pstmt.setString(index, param.toString());
         }

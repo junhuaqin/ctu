@@ -45,10 +45,13 @@ public class DBProxyHandler implements InvocationHandler {
         Method mtd = concreteClass.getDeclaredMethod(method.getName(), classes.toArray(new Class[classes.size()]));
 
         if (null != mtd.getAnnotation(NeedDB.class)) {
-            Connection conn = DbUtil.atomicGetConnection();
+            Connection conn = DbUtil.getConnection();
             setDbConn(obj, conn);
             try {
-                return method.invoke(obj, args);
+                conn.setAutoCommit(false);
+                Object ret = method.invoke(obj, args);
+                conn.commit();
+                return ret;
             } catch (Exception e) {
                 DbUtil.rollbackQuietly(conn);
                 throw e;

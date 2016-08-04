@@ -3,6 +3,7 @@ package com.qfg.ctu.servlet.rest.services;
 import com.qfg.ctu.servlet.rest.pojos.RestProduct;
 import org.jvnet.hk2.annotations.Service;
 
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -15,4 +16,5 @@ public interface ProductService {
     RestProduct getByQR(String id) throws Exception;
     RestProduct addProduct(RestProduct product) throws Exception;
     void decreaseStore(Integer id, Integer dec) throws Exception;
+    void importProducts(InputStream is) throws Exception;
 }
