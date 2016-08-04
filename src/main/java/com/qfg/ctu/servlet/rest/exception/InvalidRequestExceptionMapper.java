@@ -11,7 +11,6 @@ public class InvalidRequestExceptionMapper implements ExceptionMapper<InvalidReq
 	@Override
 	public Response toResponse(final InvalidRequestException e) {
 		e.printStackTrace();
-		return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+		return Response.status(e.getStatusCode()).entity(e.getMessage()).build();
 	}
-
 }

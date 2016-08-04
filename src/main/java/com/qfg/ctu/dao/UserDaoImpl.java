@@ -7,6 +7,7 @@ import com.qfg.ctu.util.DateTimeUtil;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -41,6 +42,16 @@ public class UserDaoImpl extends AbstractDao<User> implements UserDao {
     @Override
     public User findById(Integer id) throws SQLException {
         return _get(connection, _sqlSelect + "WHERE id=?", id);
+    }
+
+    @Override
+    public User findByUserName(String name) throws SQLException {
+        return _get(connection, _sqlSelect + "WHERE username=?", name);
+    }
+
+    @Override
+    public void setLastLogin(Integer id, LocalDateTime time) throws SQLException {
+        _update(connection, String.format("UPDATE %s SET lastLoginOn=? WHERE id=?", _tblName), time, id);
     }
 
     @Override

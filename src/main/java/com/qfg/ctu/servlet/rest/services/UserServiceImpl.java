@@ -2,9 +2,13 @@ package com.qfg.ctu.servlet.rest.services;
 
 import com.qfg.ctu.annotations.NeedDB;
 import com.qfg.ctu.dao.DaoFactory;
+import com.qfg.ctu.dao.pojo.User;
+import com.qfg.ctu.servlet.rest.exception.InvalidRequestException;
 import com.qfg.ctu.servlet.rest.pojos.RestUser;
+import com.qfg.ctu.util.DateTimeUtil;
 
 import javax.inject.Inject;
+import javax.ws.rs.core.Response;
 import java.sql.Connection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,5 +34,19 @@ public class UserServiceImpl implements UserService {
         return  DaoFactory.getUserDao(conn).findAll().stream()
                 .map(RestUser::new)
                 .collect(Collectors.toList());
+    }
+
+    @NeedDB
+    @Override
+    public RestUser Login(String userName, String password) throws Exception {
+        User user = DaoFactory.getUserDao(conn).findByUserName(userName);
+        if (!user.checkPassword(password)) {
+            throw new InvalidRequestException(Response.Status.UNAUTHORIZED, "Not allowed to access");
+        }
+
+        user.setLastLoginAt(DateTimeUtil.nowInBeiJing());
+        DaoFactory.getUserDao(conn).setLastLogin(user.getId(), user.getLastLoginAt());
+
+        return new RestUser(user);
     }
 }

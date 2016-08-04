@@ -87,4 +87,8 @@ public class User {
     public void setRole(int role) {
         this.role = role;
     }
+
+    public boolean checkPassword(String password) {
+        return this.password.equals(password);
+    }
 }

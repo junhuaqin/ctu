@@ -3,6 +3,7 @@ package com.qfg.ctu.dao;
 import com.qfg.ctu.dao.pojo.User;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -21,6 +22,10 @@ public interface UserDao extends GenericDao<User, Integer>  {
 
     @Override
     User findById(Integer id) throws SQLException;
+
+    User findByUserName(String name) throws SQLException;
+
+    void setLastLogin(Integer id, LocalDateTime time) throws SQLException;
 
     @Override
     List<User> findAll() throws SQLException;
