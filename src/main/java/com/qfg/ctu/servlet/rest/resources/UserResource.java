@@ -37,6 +37,6 @@ public class UserResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path(_LOGIN_SUB_URL)
     public Response login(RestUser posted) throws Exception {
-        return Response.status(Response.Status.OK).entity(userService.Login(posted.userName, posted.password)).build();
+        return Response.status(Response.Status.OK).entity(userService.login(posted.userName, posted.password)).build();
     }
 }

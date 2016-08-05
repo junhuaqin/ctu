@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
 
     @NeedDB
     @Override
-    public RestUser Login(String userName, String password) throws Exception {
+    public RestUser login(String userName, String password) throws Exception {
         User user = DaoFactory.getUserDao(conn).findByUserName(userName);
         if (!user.checkPassword(password)) {
             throw new InvalidRequestException(Response.Status.UNAUTHORIZED, "Not allowed to access");

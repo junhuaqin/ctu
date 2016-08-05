@@ -16,7 +16,7 @@ public class DateTimeUtil {
     }
 
     public static LocalDateTime getLocalDateTime(Long milli) {
-        return mapTimestamp2LocalDateTime(new Timestamp(milli));
+        return LocalDateTime.ofEpochSecond(milli/1000, 0, Constant.BEIJING_ZONE);
     }
 
     public static Timestamp mapLocalDateTime2Timestamp(LocalDateTime time) {

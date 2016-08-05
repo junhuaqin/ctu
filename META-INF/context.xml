@@ -13,7 +13,7 @@
               maxIdle="10"
               maxWait="18"
               username="root"
-              password=""
+              password="353234coN"
               driverClassName="com.mysql.jdbc.Driver"
               validationQuery="/* ping */ SELECT 1"
               removeAbandoned="true"
@@ -21,5 +21,5 @@
               testOnBorrow="true"
               logAbandoned="true"
               abandonWhenPercentageFull="50"
-              url="jdbc:mysql://localhost:3306?useCursorFetch=true&amp;defaultFetchSize=1000&amp;dumpQueriesOnException=true&amp;useUnicode=true&amp;characterEncoding=UTF-8"/>
+              url="jdbc:mysql://aa1k8bbtr117z4j.cissazxkmcgx.us-west-2.rds.amazonaws.com:3306?useCursorFetch=true&amp;defaultFetchSize=1000&amp;dumpQueriesOnException=true&amp;useUnicode=true&amp;characterEncoding=UTF-8"/>
 </Context>

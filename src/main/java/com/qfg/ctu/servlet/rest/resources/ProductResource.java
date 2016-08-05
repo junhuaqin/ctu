@@ -42,6 +42,7 @@ public class ProductResource {
     }
 
     @POST
+    @Path("add")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response addProduct(@NotNull RestProduct product) throws Exception {

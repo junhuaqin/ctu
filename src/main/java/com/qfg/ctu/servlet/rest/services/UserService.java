@@ -13,5 +13,5 @@ import java.util.List;
 public interface UserService {
     RestUser getById(Integer id) throws Exception;
     List<RestUser> getAll() throws Exception;
-    RestUser Login(String userName, String password) throws Exception;
+    RestUser login(String userName, String password) throws Exception;
 }
