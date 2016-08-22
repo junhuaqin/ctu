@@ -2,6 +2,7 @@ package com.qfg.ctu.dao.pojo;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -11,7 +12,7 @@ public class Order {
     private int id;
     private int sale;
     private LocalDateTime createdAt;
-    private List<OrderItem> items;
+    private List<OrderItem> items = new ArrayList<>();
     private int totalPrice;
 
     public static class OrderItem {
@@ -86,11 +87,11 @@ public class Order {
     }
 
     public void addItem(OrderItem item) {
-        if (null == this.items) {
-            this.items = new ArrayList<>();
-        }
-
         this.items.add(item);
+    }
+
+    public void addItems(Collection<OrderItem> items) {
+        this.items.addAll(items);
     }
 
     public int getTotalPrice() {

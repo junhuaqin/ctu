@@ -55,7 +55,7 @@ public class OrderServiceImpl implements OrderService {
     public List<RestOrder> getAll(Long from, Long to) throws Exception {
         List<Order> orders = DaoFactory.getOrderDao(conn).findAll(
                 DateTimeUtil.getLocalDateTime(from),
-                DateTimeUtil.getLocalDateTime(to));
+                DateTimeUtil.getLocalDateTime(to), true);
 
         return orders.stream().map(this::mapOrder2Rest).collect(Collectors.toList());
     }

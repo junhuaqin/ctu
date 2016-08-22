@@ -9,8 +9,9 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by rbtq on 7/30/16.
@@ -65,18 +66,21 @@ public class OrderDaoImpl extends AbstractDao<OrderJoinItem> implements OrderDao
         return order;
     }
 
-    private List<Order> mapOrderJoinItems2Orders(List<OrderJoinItem> orderJoinItems) {
-        Map<Integer, Order> orderMap = new HashMap<>();
-        orderJoinItems.stream().map(this::mapOrderJoinItem2Order)
-                .forEach(n->{
-                    if (orderMap.containsKey(n.getId())) {
-                        orderMap.get(n.getId()).addItem(n.getItems().get(0));
-                    } else {
-                        orderMap.put(n.getId(), n);
-                    }
-                });
+    private void addOrder2List(List<Order> orders, final Order order) {
+        Optional<Order> orderOptional = orders.stream().filter(n->n.getId() == order.getId()).findFirst();
+        if (!orderOptional.isPresent()) {
+            orders.add(order);
+        } else {
+            orderOptional.get().addItems(order.getItems());
+        }
+    }
 
-        return orderMap.values().stream().collect(Collectors.toList());
+    private List<Order> mapOrderJoinItems2Orders(List<OrderJoinItem> orderJoinItems) {
+        final List<Order> orders = new LinkedList<>();
+        orderJoinItems.stream().map(this::mapOrderJoinItem2Order)
+                .forEach(n->addOrder2List(orders, n));
+
+        return orders;
     }
 
     @Override
@@ -96,9 +100,14 @@ public class OrderDaoImpl extends AbstractDao<OrderJoinItem> implements OrderDao
 
     @Override
     public List<Order> findAll(LocalDateTime from, LocalDateTime to) throws SQLException {
+        return findAll(from, to, false);
+    }
+
+    @Override
+    public List<Order> findAll(LocalDateTime from, LocalDateTime to, boolean desc) throws SQLException {
         List<OrderJoinItem> orderJoinItems = _getArray(connection,
-                                            String.format("%s AND a.createdOn>=? AND a.createdOn <=?", _sqlSelect),
-                                            from, to);
+                String.format("%s AND a.createdOn>=? AND a.createdOn <=? order by a.createdOn %s", _sqlSelect, desc?"desc":"asc"),
+                from, to);
 
         return mapOrderJoinItems2Orders(orderJoinItems);
     }
