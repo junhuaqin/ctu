@@ -15,16 +15,23 @@ public class UnhandledExceptionMapper implements ExceptionMapper<Throwable> {
     @Override
     public Response toResponse(final Throwable t) {
         String errMsg;
-        if (t instanceof SQLException) {
-            SQLException se = (SQLException) t;
+        Throwable throwable = t;
+        if (null != t.getCause())
+            throwable = t.getCause();
+        if (throwable instanceof SQLException) {
+            SQLException se = (SQLException) throwable;
             errMsg = se.getMessage();
         }
-        else if (t instanceof WebApplicationException) {
-            WebApplicationException we = (WebApplicationException)t;
+        else if (throwable instanceof WebApplicationException) {
+            WebApplicationException we = (WebApplicationException)throwable;
             return we.getResponse();
         }
+        else if (throwable instanceof InvalidRequestException){
+            InvalidRequestException e = (InvalidRequestException)throwable;
+            return Response.status(e.getStatusCode()).entity(e.getMessage()).build();
+        }
         else {
-            errMsg = "unknown error:" + t.getMessage();
+            errMsg = "unknown error:" + throwable.getMessage();
         }
 
         t.printStackTrace();
