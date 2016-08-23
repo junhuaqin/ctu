@@ -12,7 +12,7 @@ import javax.ws.rs.core.Response;
  * Created by rbtq on 7/30/16.
  */
 @Path("/orders")
-public class OrderResource {
+public class OrderResource extends BaseResource{
     @Inject
     private OrderService orderService;
 
@@ -29,7 +29,7 @@ public class OrderResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response add(RestOrder restOrder) throws Exception {
-        return Response.status(Response.Status.OK).entity(orderService.add(restOrder)).build();
+        return Response.status(Response.Status.OK).entity(orderService.add(getAdminId(), restOrder)).build();
     }
 
     @GET

@@ -14,4 +14,5 @@ public class Constant {
     public final static String TBL_ROLES    = "roles";
     public final static String TBL_ORDERS   = "orders";
     public final static String TBL_ORDERITEMS = "orderItems";
+    public final static String AUTH = "Authorization";
 }

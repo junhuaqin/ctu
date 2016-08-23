@@ -16,5 +16,5 @@ public interface OrderService {
 
     RestStatics getStatics() throws Exception;
 
-    RestOrder add(RestOrder restOrder) throws Exception;
+    RestOrder add(Integer userId, RestOrder restOrder) throws Exception;
 }

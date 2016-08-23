@@ -75,9 +75,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @NeedDB
-    public RestOrder add(RestOrder restOrder) throws Exception {
+    public RestOrder add(Integer userId, RestOrder restOrder) throws Exception {
         Order order = new Order();
-        order.setSale(1);
+        order.setSale(userId);
         order.setTotalPrice(restOrder.totalPrice);
         order.setCreatedAt(DateTimeUtil.nowInBeiJing());
         order.setItems(restOrder.items.stream().map(n->{

@@ -12,7 +12,7 @@ import javax.ws.rs.core.Response;
  * Created by rbtq on 8/3/16.
  */
 @Path("/users")
-public class UserResource {
+public class UserResource extends BaseResource{
     private static final String _LOGIN_SUB_URL = "login";
     public static final String LOGIN_PATH = "/users/" + _LOGIN_SUB_URL;
 

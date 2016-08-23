@@ -34,4 +34,8 @@ public class StringUtil {
     public static String strip(String str) {
         return str == null?"":megastrip(str, true, true, " \r\n\t　   ");
     }
+
+    public static boolean isNullOrEmpty(String string) {
+        return string == null || string.length() == 0; // string.isEmpty() in Java 6
+    }
 }

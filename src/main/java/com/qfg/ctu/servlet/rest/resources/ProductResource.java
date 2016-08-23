@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  * Created by rbtq on 7/26/16.
  */
 @Path("/products")
-public class ProductResource {
+public class ProductResource extends BaseResource{
     private final static Logger LOGGER = Logger.getLogger(ProductResource.class.getName());
 
     @Inject
