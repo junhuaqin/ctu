@@ -11,7 +11,7 @@ public class OrderJoinItem {
     private LocalDateTime createdAt;
     private int totalPrice;
 
-    private int barCode;
+    private String barCode;
     private String title;
     private int unitPrice;
     private int count;
@@ -48,11 +48,11 @@ public class OrderJoinItem {
         this.totalPrice = totalPrice;
     }
 
-    public int getBarCode() {
+    public String getBarCode() {
         return barCode;
     }
 
-    public void setBarCode(int barCode) {
+    public void setBarCode(String barCode) {
         this.barCode = barCode;
     }
 

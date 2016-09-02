@@ -12,9 +12,9 @@ import java.util.List;
 @Service(name=ProductServiceImpl.NAME)
 public interface ProductService {
     List<RestProduct> getAll() throws Exception;
-    RestProduct getByBarcode(Integer id) throws Exception;
+    RestProduct getByBarcode(String id) throws Exception;
     RestProduct getByQR(String id) throws Exception;
     RestProduct addProduct(RestProduct product) throws Exception;
-    void decreaseStore(Integer id, Integer dec) throws Exception;
+    void decreaseStore(String id, Integer dec) throws Exception;
     void importProducts(InputStream is) throws Exception;
 }

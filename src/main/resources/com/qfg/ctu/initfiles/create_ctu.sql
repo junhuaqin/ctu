@@ -28,7 +28,7 @@ create table accounts
 
 create table products
 (
-    id int not null primary key,
+    id varchar(32) not null primary key,
     title varchar(128) not null,
     unitPrice int not null default 0,
     store int not null default 0,
@@ -47,7 +47,7 @@ create table orders
 create table orderItems
 (
     order_id int not null,
-    product_id int not null,
+    product_id varchar(32) not null,
     unitPrice int not null default 0,
     sale_count int not null default 0,
     foreign key (order_id) references orders(id) ON DELETE CASCADE,

@@ -132,7 +132,7 @@ public class OrderDaoImpl extends AbstractDao<OrderJoinItem> implements OrderDao
         item.setTotalPrice(qrs.getInt("totalPrice"));
         item.setCreatedAt(DateTimeUtil.mapTimestamp2LocalDateTime(qrs.getTimestamp("createdOn")));
 
-        item.setBarCode(qrs.getInt("product_id"));
+        item.setBarCode(qrs.getString("product_id"));
         item.setTitle(qrs.getString("title"));
         item.setUnitPrice(qrs.getInt("unitPrice"));
         item.setCount(qrs.getInt("sale_count"));

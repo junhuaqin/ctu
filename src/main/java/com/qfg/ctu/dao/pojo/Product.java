@@ -4,16 +4,16 @@ package com.qfg.ctu.dao.pojo;
  * Created by rbtq on 7/26/16.
  */
 public class Product {
-    private int barCode;
+    private String barCode;
     private String title;
     private int unitPrice; // all is real price * 100
     private int storeNum;
 
-    public int getBarCode() {
+    public String getBarCode() {
         return barCode;
     }
 
-    public void setBarCode(int barCode) {
+    public void setBarCode(String barCode) {
         this.barCode = barCode;
     }
 

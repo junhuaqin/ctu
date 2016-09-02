@@ -46,7 +46,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @NeedDB
-    public RestProduct getByBarcode(Integer id) throws Exception {
+    public RestProduct getByBarcode(String id) throws Exception {
         ProductDao productDao = DaoFactory.getProductDao(conn);
         Product product = productDao.findById(id);
 
@@ -57,7 +57,7 @@ public class ProductServiceImpl implements ProductService {
         return new RestProduct(product);
     }
 
-    private int getBarcodeFromTBH(String id) throws Exception {
+    private String getBarcodeFromTBH(String id) throws Exception {
         LOGGER.log(Level.INFO, String.format("Query QR:%s", id));
 
         Form form = (new Form())
@@ -78,7 +78,7 @@ public class ProductServiceImpl implements ProductService {
             String result = response.get().readEntity(String.class);
             JsonObject jsonObject = (new JsonParser()).parse(result).getAsJsonObject();
             JsonObject info = jsonObject.getAsJsonObject("info");
-            return info.get("product_code").getAsInt();
+            return info.get("product_code").getAsString();
         } finally {
             response.ifPresent(Response::close);
             client.ifPresent(Client::close);
@@ -97,7 +97,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @NeedDB
-    public void decreaseStore(Integer id, Integer dec) throws Exception {
+    public void decreaseStore(String id, Integer dec) throws Exception {
         DaoFactory.getProductDao(conn).minusStore(id, dec);
     }
 

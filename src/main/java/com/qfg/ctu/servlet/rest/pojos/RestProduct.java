@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class RestProduct {
-    public int barCode;
+    public String barCode;
     public String title;
     public int unitPrice;
     public int left;

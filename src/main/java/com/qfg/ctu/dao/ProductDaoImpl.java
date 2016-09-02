@@ -33,17 +33,17 @@ public class ProductDaoImpl extends AbstractDao<Product> implements ProductDao {
     }
 
     @Override
-    public void minusStore(Integer id, int count) throws SQLException {
+    public void minusStore(String id, int count) throws SQLException {
         _update(connection, String.format("UPDATE %s SET store=store-? WHERE id=?", _tblName), count, id);
     }
 
     @Override
-    public void delete(Integer id) throws SQLException {
+    public void delete(String id) throws SQLException {
         _update(connection, String.format("DELETE FROM %s WHERE id=?", _tblName), id);
     }
 
     @Override
-    public Product findById(Integer id) throws SQLException {
+    public Product findById(String id) throws SQLException {
         return _get(connection, _sqlSelect + "WHERE id=?", id);
     }
 
@@ -60,7 +60,7 @@ public class ProductDaoImpl extends AbstractDao<Product> implements ProductDao {
     @Override
     protected Product _loadRecord(ResultSet qrs) throws SQLException {
         Product product = new Product();
-        product.setBarCode(qrs.getInt("id"));
+        product.setBarCode(qrs.getString("id"));
         product.setTitle(qrs.getString("title"));
         product.setUnitPrice(qrs.getInt("unitPrice"));
         product.setStoreNum(qrs.getInt("store"));

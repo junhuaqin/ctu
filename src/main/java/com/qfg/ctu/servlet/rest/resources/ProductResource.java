@@ -28,16 +28,16 @@ public class ProductResource extends BaseResource{
     }
 
     @GET
-    @Path("{barCode: \\d+}")
+    @Path("{barCode}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getByBarcode(@PathParam("barCode") int id) throws Exception {
+    public Response getByBarcode(@PathParam("barCode") String id) throws Exception {
         return Response.status(Response.Status.OK).entity(productService.getByBarcode(id)).build();
     }
 
     @GET
-    @Path("qr/{barCode}")
+    @Path("qr/{qrCode}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getByQR(@PathParam("barCode") String id) throws Exception {
+    public Response getByQR(@PathParam("qrCode") String id) throws Exception {
         return Response.status(Response.Status.OK).entity(productService.getByQR(id)).build();
     }
 
