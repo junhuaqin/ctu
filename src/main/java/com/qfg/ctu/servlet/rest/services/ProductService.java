@@ -15,6 +15,8 @@ public interface ProductService {
     RestProduct getByBarcode(String id) throws Exception;
     RestProduct getByQR(String id) throws Exception;
     RestProduct addProduct(RestProduct product) throws Exception;
+    RestProduct updateProduct(RestProduct product) throws Exception;
+    RestProduct deleteProduct(String id) throws Exception;
     void decreaseStore(String id, Integer dec) throws Exception;
     void importProducts(InputStream is) throws Exception;
 }

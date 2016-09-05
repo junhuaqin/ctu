@@ -28,8 +28,8 @@ public class ProductDaoImpl extends AbstractDao<Product> implements ProductDao {
 
     @Override
     public void update(Product obj) throws SQLException {
-        _update(connection, String.format("UPDATE %s SET title=?, store=?, unitPrice=?", _tblName),
-                obj.getTitle(), obj.getStoreNum(), obj.getUnitPrice());
+        _update(connection, String.format("UPDATE %s SET title=?, store=?, unitPrice=? WHERE id=?", _tblName),
+                obj.getTitle(), obj.getStoreNum(), obj.getUnitPrice(), obj.getBarCode());
     }
 
     @Override

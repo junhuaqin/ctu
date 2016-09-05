@@ -96,6 +96,22 @@ public class ProductServiceImpl implements ProductService {
         return product;
     }
 
+    @Override
+    @NeedDB
+    public RestProduct updateProduct(RestProduct product) throws Exception {
+        DaoFactory.getProductDao(conn).update(product.toInner());
+        return product;
+    }
+
+    @Override
+    @NeedDB
+    public RestProduct deleteProduct(String id) throws Exception {
+        RestProduct product = new RestProduct();
+        product.barCode = id;
+        DaoFactory.getProductDao(conn).delete(id);
+        return null;
+    }
+
     @NeedDB
     public void decreaseStore(String id, Integer dec) throws Exception {
         DaoFactory.getProductDao(conn).minusStore(id, dec);
