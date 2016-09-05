@@ -105,11 +105,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @NeedDB
-    public RestProduct deleteProduct(String id) throws Exception {
-        RestProduct product = new RestProduct();
-        product.barCode = id;
+    public Boolean deleteProduct(String id) throws Exception {
         DaoFactory.getProductDao(conn).delete(id);
-        return null;
+        return true;
     }
 
     @NeedDB

@@ -1,22 +1,24 @@
 package com.qfg.ctu.util;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 /**
  * Created by Administrator on 2016/8/3.
  */
 public class DateTimeUtil {
     public static LocalDateTime nowInBeiJing() {
-        return LocalDateTime.now(Constant.BEIJING_ZONE);
+        return LocalDateTime.now();
     }
 
     public static Long getMilli(LocalDateTime time) {
-        return time.toInstant(Constant.BEIJING_ZONE).toEpochMilli();
+        return time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
     }
 
     public static LocalDateTime getLocalDateTime(Long milli) {
-        return LocalDateTime.ofEpochSecond(milli/1000, 0, Constant.BEIJING_ZONE);
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(milli), ZoneId.systemDefault());
     }
 
     public static Timestamp mapLocalDateTime2Timestamp(LocalDateTime time) {
