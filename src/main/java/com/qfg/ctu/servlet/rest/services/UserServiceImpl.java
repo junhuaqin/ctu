@@ -13,6 +13,8 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.qfg.ctu.util.DateTimeUtil.getMilli;
+
 /**
  * Created by rbtq on 8/3/16.
  */
@@ -48,5 +50,15 @@ public class UserServiceImpl implements UserService {
         DaoFactory.getUserDao(conn).setLastLogin(user.getId(), user.getLastLoginAt());
 
         return new RestUser(user);
+    }
+
+    @NeedDB
+    @Override
+    public RestUser add(RestUser user) throws Exception {
+        user.createAt = DateTimeUtil.getMilli(DateTimeUtil.nowInBeiJing());
+        User innerUser = user.toInner();
+        DaoFactory.getUserDao(conn).save(innerUser);
+
+        return new RestUser(innerUser);
     }
 }

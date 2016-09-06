@@ -56,4 +56,4 @@ create table orderItems
 
 insert into roles values (1, 'administrator',0, 'Administrator can do everything');
 insert into accounts(name, username, password, role_id) values ('adm', 'admin', 'admin', 1);
-insert into accounts(name, username, password, role_id) values ('双群', '15208386955', 'admin', 1);
+insert into accounts(name, username, password, role_id) values ('双群', 'shuangqun.tan', 'admin', 1);

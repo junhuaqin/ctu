@@ -39,4 +39,12 @@ public class UserResource extends BaseResource{
     public Response login(RestUser posted) throws Exception {
         return Response.status(Response.Status.OK).entity(userService.login(posted.userName, posted.password)).build();
     }
+
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("add")
+    public Response add(RestUser posted) throws Exception {
+        return Response.status(Response.Status.OK).entity(userService.add(posted)).build();
+    }
 }

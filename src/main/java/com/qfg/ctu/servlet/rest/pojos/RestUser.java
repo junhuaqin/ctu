@@ -15,6 +15,7 @@ public class RestUser {
     public boolean active;
     public long createAt;
     public long lastLoginAt;
+    public int roleId;
 
     public RestUser() {
 
@@ -28,5 +29,19 @@ public class RestUser {
         createAt = DateTimeUtil.getMilli(user.getCreatedAt());
         lastLoginAt = DateTimeUtil.getMilli(user.getLastLoginAt());
         password = Constant.SENSITIVE;
+        roleId = user.getRole();
+    }
+
+    public User toInner() {
+        User user = new User();
+        user.setName(name);
+        user.setActive(active);
+        user.setUserName(userName);
+        user.setPassword(password);
+        user.setCreatedAt(DateTimeUtil.getLocalDateTime(createAt));
+        user.setLastLoginAt(user.getCreatedAt());
+        user.setRole(roleId);
+
+        return user;
     }
 }

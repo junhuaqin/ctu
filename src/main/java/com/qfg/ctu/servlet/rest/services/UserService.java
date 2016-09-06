@@ -14,4 +14,5 @@ public interface UserService {
     RestUser getById(Integer id) throws Exception;
     List<RestUser> getAll() throws Exception;
     RestUser login(String userName, String password) throws Exception;
+    RestUser add(RestUser user) throws Exception;
 }
