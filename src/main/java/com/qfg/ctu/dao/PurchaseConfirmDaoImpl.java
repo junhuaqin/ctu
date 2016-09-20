@@ -25,12 +25,13 @@ public class PurchaseConfirmDaoImpl extends AbstractDao<Purchase.PurchaseItem.Co
     public void save(Integer pid, Purchase.PurchaseItem.Confirm obj) throws SQLException {
         _update(connection, String.format("INSERT INTO %s (purchase_item_id, amount, sale, confirmOn) VALUES (?,?,?,?)", _tblPurchaseConfirmName),
                 pid, obj.getAmount(), obj.getSale(), obj.getConfirmAt());
+        obj.setId(_getLastId(connection));
     }
 
     @Override
     public void update(Purchase.PurchaseItem.Confirm obj) throws SQLException {
-        _update(connection, String.format("UPDATE %s SET amount=?, confirmOn=? WHERE id=?", _tblPurchaseConfirmName),
-                obj.getAmount(), obj.getConfirmAt(), obj.getId());
+        _update(connection, String.format("UPDATE %s SET sale=?, amount=?, confirmOn=? WHERE id=?", _tblPurchaseConfirmName),
+                obj.getSale(), obj.getAmount(), obj.getConfirmAt(), obj.getId());
     }
 
     @Override

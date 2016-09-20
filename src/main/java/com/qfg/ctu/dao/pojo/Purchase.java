@@ -54,6 +54,11 @@ public class Purchase {
         this.totalPrice = totalPrice;
     }
 
+    public void updateTotalPrice() {
+        totalPrice = 0;
+        items.forEach(n->totalPrice+=n.unitPrice*n.amount);
+    }
+
     public static class PurchaseItem {
         private int id;
         private String barCode;
@@ -109,6 +114,11 @@ public class Purchase {
 
         public void setAmountConfirmed(int amountConfirmed) {
             this.amountConfirmed = amountConfirmed;
+        }
+
+        public void updateAmountConfirmed() {
+            amountConfirmed = 0;
+            confirms.forEach(n->amountConfirmed+=n.getAmount());
         }
 
         public List<Confirm> getConfirms() {

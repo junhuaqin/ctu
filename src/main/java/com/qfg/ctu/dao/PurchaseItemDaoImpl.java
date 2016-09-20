@@ -27,6 +27,7 @@ public class PurchaseItemDaoImpl extends AbstractDao<Purchase.PurchaseItem> impl
     public void save(Integer pid, Purchase.PurchaseItem obj) throws SQLException {
         _update(connection, String.format("INSERT INTO %s (purchase_id, product_id, unitPrice, amount) VALUES (?,?,?,?)", _tblPurchaseItemName),
                 pid, obj.getBarCode(), obj.getUnitPrice(), obj.getAmount());
+        obj.setId(_getLastId(connection));
     }
 
     @Override
@@ -48,6 +49,12 @@ public class PurchaseItemDaoImpl extends AbstractDao<Purchase.PurchaseItem> impl
     @Override
     public List<Purchase.PurchaseItem> findByPId(Integer id) throws SQLException {
         return _getArray(connection, _sqlSelect + "WHERE purchase_id=?", id);
+    }
+
+    @Override
+    public void confirm(Integer id, Integer amount) throws SQLException {
+        _update(connection, String.format("UPDATE %s SET amountConfirmed=amountConfirmed+? WHERE id=?", _tblPurchaseItemName),
+                amount, id);
     }
 
     @Override

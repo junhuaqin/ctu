@@ -63,4 +63,10 @@ public class PurchaseDaoImpl extends AbstractDao<Purchase> implements PurchaseDa
         purchase.setTotalPrice(qrs.getInt("totalPrice"));
         return purchase;
     }
+
+    @Override
+    public void addTotalPrice(int id, int price) throws SQLException {
+        _update(connection, String.format("UPDATE %s SET totalPrice=totalPrice+? WHERE id=?", _tblPurchasesName),
+                price, id);
+    }
 }

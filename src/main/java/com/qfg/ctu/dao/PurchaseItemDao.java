@@ -18,4 +18,6 @@ public interface PurchaseItemDao {
     Purchase.PurchaseItem findById(Integer id) throws SQLException;
 
     List<Purchase.PurchaseItem> findByPId(Integer id) throws SQLException;
+
+    void confirm(Integer id, Integer amount) throws SQLException;
 }
