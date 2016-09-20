@@ -10,27 +10,10 @@ import java.util.List;
  * Created by rbtq on 7/30/16.
  */
 public interface OrderDao extends GenericDao<Order, Integer> {
-    @Override
-    void save(Order obj) throws SQLException;
-
-    @Override
-    void update(Order obj) throws SQLException;
-
-    @Override
-    void delete(Integer id) throws SQLException;
-
-    @Override
-    Order findById(Integer id) throws SQLException;
-
-    @Override
-    List<Order> findAll() throws SQLException;
 
     List<Order> findAll(LocalDateTime from ,LocalDateTime to) throws SQLException;
 
     List<Order> findAll(LocalDateTime from ,LocalDateTime to, boolean desc) throws SQLException;
 
     Long getTotalPrice(LocalDateTime from ,LocalDateTime to) throws SQLException;
-
-    @Override
-    List<Order> findByQuery(String query, Object... args) throws SQLException;
 }

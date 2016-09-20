@@ -46,7 +46,7 @@ public class OrderDaoImpl extends AbstractDao<OrderJoinItem> implements OrderDao
 
     @Override
     public void delete(Integer id) throws SQLException {
-        _update(connection, String.format("DELETE FROM %s WHERE id=?", _tblOrdersName), id);
+        throw new SQLException("Can't delete an order");
     }
 
     private Order mapOrderJoinItem2Order(OrderJoinItem n) {

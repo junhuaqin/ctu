@@ -38,8 +38,6 @@ public class RestUser {
         user.setActive(active);
         user.setUserName(userName);
         user.setPassword(password);
-        user.setCreatedAt(DateTimeUtil.getLocalDateTime(createAt));
-        user.setLastLoginAt(user.getCreatedAt());
         user.setRole(roleId);
 
         return user;

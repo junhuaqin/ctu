@@ -17,4 +17,16 @@ public class DaoFactory {
     public static UserDao getUserDao(Connection connection) {
         return new UserDaoImpl(connection);
     }
+
+    public static PurchaseDao getPurchaseDao(Connection connection) {
+        return new PurchaseDaoImpl(connection);
+    }
+
+    public static PurchaseItemDao getPurchaseItemDao(Connection connection) {
+        return new PurchaseItemDaoImpl(connection);
+    }
+
+    public static PurchaseConfirmDao getPurchaseConfirmDao(Connection connection) {
+        return new PurchaseConfirmDaoImpl(connection);
+    }
 }

@@ -41,7 +41,7 @@ create table orders
     sale int not null,
     createdOn timestamp not null default now(),
     totalPrice int not null default 0,
-    foreign key (sale) references accounts(id)
+    foreign key (sale) references accounts(id) ON DELETE restrict
 ) ENGINE=INNODB;
 
 create table orderItems
@@ -52,6 +52,38 @@ create table orderItems
     sale_count int not null default 0,
     foreign key (order_id) references orders(id) ON DELETE CASCADE,
     foreign key (product_id) references products(id) ON DELETE restrict
+) ENGINE=INNODB;
+
+create table purchases
+(
+    id int not null auto_increment primary key,
+    sale int not null,
+    createdOn timestamp not null default now(),
+    totalPrice int not null default 0,
+    foreign key (sale) references accounts(id) ON DELETE restrict
+) ENGINE=INNODB;
+
+create table purchaseItems
+(
+    id int not null auto_increment primary key,
+    purchase_id int not null,
+    product_id varchar(32) not null,
+    unitPrice int not null default 0,
+    amount int not null default 0,
+    amountConfirmed int not null default 0,
+    foreign key (purchase_id) references purchases(id) ON DELETE CASCADE,
+    foreign key (product_id) references products(id) ON DELETE restrict
+) ENGINE=INNODB;
+
+create table purchaseConfirm
+(
+    id int not null auto_increment primary key,
+    purchase_item_id int not null,
+    amount int not null default 0,
+    sale int not null,
+    confirmOn timestamp not null default now(),
+    foreign key (purchase_item_id) references purchaseItems(id) ON DELETE CASCADE,
+    foreign key (sale) references accounts(id) ON DELETE restrict
 ) ENGINE=INNODB;
 
 insert into roles values (1, 'administrator',0, 'Administrator can do everything');
