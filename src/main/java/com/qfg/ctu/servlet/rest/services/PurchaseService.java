@@ -24,7 +24,7 @@ public interface PurchaseService {
     RestPurchaseConfirm updateConfirm(Integer userId, Integer id, RestPurchaseConfirm confirm) throws Exception;
     RestPurchase update(RestPurchase purchase) throws Exception;
 
-    Boolean deletePurchase(RestPurchase purchase) throws Exception;
-    Boolean deleteItem(Integer id, RestPurchaseItem item) throws Exception;
-    Boolean deleteConfirm(Integer id, RestPurchaseConfirm confirm) throws Exception;
+    Boolean deletePurchase(Integer id) throws Exception;
+    Boolean deleteItem(Integer id, Integer itemId) throws Exception;
+    Boolean deleteConfirm(Integer id, Integer confirmId) throws Exception;
 }

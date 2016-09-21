@@ -53,7 +53,16 @@ public class PurchaseServiceImpl implements PurchaseService {
     @Override
     public List<RestPurchase> getAll() throws Exception {
         List<Purchase> purchases = DaoFactory.getPurchaseDao(conn).findAll();
-        return purchases.stream().map(RestPurchase::new).collect(Collectors.toList());
+
+        return purchases.stream().map(n->{
+            RestPurchase purchase = new RestPurchase(n);
+            try {
+                purchase.sale = getUserName(n.getSale());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return purchase;
+        }).collect(Collectors.toList());
     }
 
     @NeedDB
@@ -67,7 +76,15 @@ public class PurchaseServiceImpl implements PurchaseService {
     @Override
     public List<RestPurchaseConfirm> getAllConfirms(Integer id) throws Exception {
         List<Purchase.PurchaseItem.Confirm> confirms = DaoFactory.getPurchaseConfirmDao(conn).findByPId(id);
-        return confirms.stream().map(RestPurchaseConfirm::new).collect(Collectors.toList());
+        return confirms.stream().map(n->{
+            RestPurchaseConfirm confirm = new RestPurchaseConfirm(n);
+            try {
+                confirm.sale = getUserName(n.getSale());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return confirm;
+        }).collect(Collectors.toList());
     }
 
     @NeedDB
@@ -108,6 +125,7 @@ public class PurchaseServiceImpl implements PurchaseService {
         return new RestPurchaseItem(innerItem);
     }
 
+    @NeedDB
     @Override
     public RestPurchaseConfirm updateConfirm(Integer userId, Integer id, RestPurchaseConfirm confirm) throws Exception {
         Purchase.PurchaseItem.Confirm oldConfirm = DaoFactory.getPurchaseConfirmDao(conn).findById(confirm.id);
@@ -132,26 +150,26 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     @NeedDB
     @Override
-    public Boolean deletePurchase(RestPurchase purchase) throws Exception {
-        DaoFactory.getPurchaseDao(conn).delete(purchase.id);
+    public Boolean deletePurchase(Integer id) throws Exception {
+        DaoFactory.getPurchaseDao(conn).delete(id);
         return true;
     }
 
     @NeedDB
     @Override
-    public Boolean deleteItem(Integer id, RestPurchaseItem item) throws Exception {
-        Purchase.PurchaseItem oldItem = DaoFactory.getPurchaseItemDao(conn).findById(item.id);
+    public Boolean deleteItem(Integer id, Integer itemId) throws Exception {
+        Purchase.PurchaseItem oldItem = DaoFactory.getPurchaseItemDao(conn).findById(itemId);
         DaoFactory.getPurchaseDao(conn).addTotalPrice(id, -oldItem.getAmount()*oldItem.getUnitPrice());
-        DaoFactory.getPurchaseItemDao(conn).delete(item.id);
+        DaoFactory.getPurchaseItemDao(conn).delete(itemId);
         return true;
     }
 
     @NeedDB
     @Override
-    public Boolean deleteConfirm(Integer id, RestPurchaseConfirm confirm) throws Exception {
-        Purchase.PurchaseItem.Confirm oldConfirm = DaoFactory.getPurchaseConfirmDao(conn).findById(confirm.id);
+    public Boolean deleteConfirm(Integer id, Integer confirmId) throws Exception {
+        Purchase.PurchaseItem.Confirm oldConfirm = DaoFactory.getPurchaseConfirmDao(conn).findById(confirmId);
         DaoFactory.getPurchaseItemDao(conn).confirm(id, -oldConfirm.getAmount());
-        DaoFactory.getPurchaseConfirmDao(conn).delete(confirm.id);
+        DaoFactory.getPurchaseConfirmDao(conn).delete(confirmId);
         return true;
     }
 }
