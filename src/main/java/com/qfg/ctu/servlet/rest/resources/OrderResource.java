@@ -1,12 +1,13 @@
 package com.qfg.ctu.servlet.rest.resources;
 
 import com.qfg.ctu.servlet.rest.pojos.RestOrder;
+import com.qfg.ctu.servlet.rest.pojos.RestStatics;
 import com.qfg.ctu.servlet.rest.services.OrderService;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import java.util.List;
 
 /**
  * Created by rbtq on 7/30/16.
@@ -18,24 +19,23 @@ public class OrderResource extends BaseResource{
 
     @GET
     @Path("{from: \\d+}/{to: \\d+}")
-//    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(@PathParam("from") long from, @PathParam("to") long to) throws Exception {
-        return Response.status(Response.Status.OK).entity(orderService.getAll(from, to)).build();
+    public List<RestOrder> getAll(@PathParam("from") long from, @PathParam("to") long to) throws Exception {
+        return orderService.getAll(from, to);
     }
 
     @POST
     @Path("add")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response add(RestOrder restOrder) throws Exception {
-        return Response.status(Response.Status.OK).entity(orderService.add(getAdminId(), restOrder)).build();
+    public RestOrder add(RestOrder restOrder) throws Exception {
+        return orderService.add(getAdminId(), restOrder);
     }
 
     @GET
     @Path("statics")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getStatics() throws Exception {
-        return Response.status(Response.Status.OK).entity(orderService.getStatics()).build();
+    public RestStatics getStatics() throws Exception {
+        return orderService.getStatics();
     }
 }

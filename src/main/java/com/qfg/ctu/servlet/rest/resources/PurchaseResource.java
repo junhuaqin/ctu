@@ -8,7 +8,7 @@ import com.qfg.ctu.servlet.rest.services.PurchaseService;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import java.util.List;
 
 /**
  * Created by rbtq on 9/20/16.
@@ -20,82 +20,82 @@ public class PurchaseResource extends BaseResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll() throws Exception {
-        return Response.status(Response.Status.OK).entity(purchaseService.getAll()).build();
+    public List<RestPurchase> getAll() throws Exception {
+        return purchaseService.getAll();
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id: \\d+}/allItems")
-    public Response getAllItems(@PathParam("id") int id) throws Exception {
-        return Response.status(Response.Status.OK).entity(purchaseService.getAllItems(id)).build();
+    public List<RestPurchaseItem> getAllItems(@PathParam("id") int id) throws Exception {
+        return purchaseService.getAllItems(id);
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id: \\d+}/allConfirms")
-    public Response getAllConfirms(@PathParam("id") int id) throws Exception {
-        return Response.status(Response.Status.OK).entity(purchaseService.getAllConfirms(id)).build();
+    public List<RestPurchaseConfirm> getAllConfirms(@PathParam("id") int id) throws Exception {
+        return purchaseService.getAllConfirms(id);
     }
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("add")
-    public Response add(RestPurchase posted) throws Exception {
-        return Response.status(Response.Status.OK).entity(purchaseService.add(getAdminId(), posted)).build();
+    public RestPurchase add(RestPurchase posted) throws Exception {
+        return purchaseService.add(getAdminId(), posted);
     }
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("{id: \\d+}/addItem")
-    public Response addItem(@PathParam("id") int id, RestPurchaseItem posted) throws Exception {
-        return Response.status(Response.Status.OK).entity(purchaseService.addItem(id, posted)).build();
+    public RestPurchaseItem addItem(@PathParam("id") int id, RestPurchaseItem posted) throws Exception {
+        return purchaseService.addItem(id, posted);
     }
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("{id: \\d+}/confirm")
-    public Response confirmItem(@PathParam("id") int id, RestPurchaseConfirm posted) throws Exception {
-        return Response.status(Response.Status.OK).entity(purchaseService.confirm(getAdminId(), id, posted)).build();
+    public RestPurchaseConfirm confirmItem(@PathParam("id") int id, RestPurchaseConfirm posted) throws Exception {
+        return purchaseService.confirm(getAdminId(), id, posted);
     }
 
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("{id: \\d+}/putItem")
-    public Response putItem(@PathParam("id") int id, RestPurchaseItem posted) throws Exception {
-        return Response.status(Response.Status.OK).entity(purchaseService.updateItem(id, posted)).build();
+    public RestPurchaseItem putItem(@PathParam("id") int id, RestPurchaseItem posted) throws Exception {
+        return purchaseService.updateItem(id, posted);
     }
 
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("{id: \\d+}/putConfirm")
-    public Response putConfirm(@PathParam("id") int id, RestPurchaseConfirm posted) throws Exception {
-        return Response.status(Response.Status.OK).entity(purchaseService.updateConfirm(getAdminId(), id, posted)).build();
+    public RestPurchaseConfirm putConfirm(@PathParam("id") int id, RestPurchaseConfirm posted) throws Exception {
+        return purchaseService.updateConfirm(getAdminId(), id, posted);
     }
 
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id: \\d+}/deleteItem/{itemId: \\d+}")
-    public Response deleteItem(@PathParam("id") int id, @PathParam("itemId") int itemId) throws Exception {
-        return Response.status(Response.Status.OK).entity(purchaseService.deleteItem(id, itemId)).build();
+    public Boolean deleteItem(@PathParam("id") int id, @PathParam("itemId") int itemId) throws Exception {
+        return purchaseService.deleteItem(id, itemId);
     }
 
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id: \\d+}/deleteConfirm/{confirmId: \\d+}")
-    public Response deleteConfirm(@PathParam("id") int id, @PathParam("id") int confirmId) throws Exception {
-        return Response.status(Response.Status.OK).entity(purchaseService.deleteConfirm(id, confirmId)).build();
+    public Boolean deleteConfirm(@PathParam("id") int id, @PathParam("id") int confirmId) throws Exception {
+        return purchaseService.deleteConfirm(id, confirmId);
     }
 
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id: \\d+}")
-    public Response delete(@PathParam("id") int id) throws Exception {
-        return Response.status(Response.Status.OK).entity(purchaseService.deletePurchase(id)).build();
+    public Boolean delete(@PathParam("id") int id) throws Exception {
+        return purchaseService.deletePurchase(id);
     }
 }

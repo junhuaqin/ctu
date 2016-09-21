@@ -6,7 +6,7 @@ import com.qfg.ctu.servlet.rest.services.UserService;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import java.util.List;
 
 /**
  * Created by rbtq on 8/3/16.
@@ -21,30 +21,30 @@ public class UserResource extends BaseResource{
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll() throws Exception {
-        return Response.status(Response.Status.OK).entity(userService.getAll()).build();
+    public List<RestUser> getAll() throws Exception {
+        return userService.getAll();
     }
 
     @GET
     @Path("{id: \\d+}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getById(@PathParam("id") int id) throws Exception {
-        return Response.status(Response.Status.OK).entity(userService.getById(id)).build();
+    public RestUser getById(@PathParam("id") int id) throws Exception {
+        return userService.getById(id);
     }
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Path(_LOGIN_SUB_URL)
-    public Response login(RestUser posted) throws Exception {
-        return Response.status(Response.Status.OK).entity(userService.login(posted.userName, posted.password)).build();
+    public RestUser login(RestUser posted) throws Exception {
+        return userService.login(posted.userName, posted.password);
     }
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("add")
-    public Response add(RestUser posted) throws Exception {
-        return Response.status(Response.Status.OK).entity(userService.add(posted)).build();
+    public RestUser add(RestUser posted) throws Exception {
+        return userService.add(posted);
     }
 }

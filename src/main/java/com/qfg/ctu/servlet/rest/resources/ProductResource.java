@@ -7,7 +7,7 @@ import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -21,47 +21,46 @@ public class ProductResource extends BaseResource{
     private ProductService productService;
 
     @GET
-//    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll() throws Exception {
-        return Response.status(Response.Status.OK).entity(productService.getAll()).build();
+    public List<RestProduct> getAll() throws Exception {
+        return productService.getAll();
     }
 
     @GET
     @Path("{barCode}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getByBarcode(@PathParam("barCode") String id) throws Exception {
-        return Response.status(Response.Status.OK).entity(productService.getByBarcode(id)).build();
+    public RestProduct getByBarcode(@PathParam("barCode") String id) throws Exception {
+        return productService.getByBarcode(id);
     }
 
     @GET
     @Path("qr/{qrCode}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getByQR(@PathParam("qrCode") String id) throws Exception {
-        return Response.status(Response.Status.OK).entity(productService.getByQR(id)).build();
+    public RestProduct getByQR(@PathParam("qrCode") String id) throws Exception {
+        return productService.getByQR(id);
     }
 
     @POST
     @Path("add")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addProduct(@NotNull RestProduct product) throws Exception {
-        return Response.status(Response.Status.OK).entity(productService.addProduct(product)).build();
+    public RestProduct addProduct(@NotNull RestProduct product) throws Exception {
+        return productService.addProduct(product);
     }
 
     @PUT
     @Path("{barCode}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateProduct(@PathParam("barCode") String id, @NotNull RestProduct product) throws Exception {
+    public RestProduct updateProduct(@PathParam("barCode") String id, @NotNull RestProduct product) throws Exception {
         product.barCode = id;
-        return Response.status(Response.Status.OK).entity(productService.updateProduct(product)).build();
+        return productService.updateProduct(product);
     }
 
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{barCode}")
-    public Response deleteProduct(@PathParam("barCode") String id) throws Exception {
-        return Response.status(Response.Status.OK).entity(productService.deleteProduct(id)).build();
+    public Boolean deleteProduct(@PathParam("barCode") String id) throws Exception {
+        return productService.deleteProduct(id);
     }
 }
