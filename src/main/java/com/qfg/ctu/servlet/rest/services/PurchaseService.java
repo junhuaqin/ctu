@@ -14,6 +14,7 @@ import java.util.List;
 public interface PurchaseService {
     RestPurchase add(Integer userId, RestPurchase purchase) throws Exception;
     List<RestPurchase> getAll() throws Exception;
+    RestPurchase getById(Integer id) throws Exception;
     List<RestPurchaseItem> getAllItems(Integer id) throws Exception;
     List<RestPurchaseConfirm> getAllConfirms(Integer id) throws Exception;
 

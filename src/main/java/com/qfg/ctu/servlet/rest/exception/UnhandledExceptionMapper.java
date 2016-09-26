@@ -15,6 +15,7 @@ public class UnhandledExceptionMapper implements ExceptionMapper<Throwable> {
     @Override
     public Response toResponse(final Throwable t) {
         String errMsg;
+        Response.StatusType status = Response.Status.BAD_REQUEST;
         Throwable throwable = t;
         if (null != t.getCause())
             throwable = t.getCause();
@@ -24,17 +25,31 @@ public class UnhandledExceptionMapper implements ExceptionMapper<Throwable> {
         }
         else if (throwable instanceof WebApplicationException) {
             WebApplicationException we = (WebApplicationException)throwable;
-            return we.getResponse();
+            status = we.getResponse().getStatusInfo();
+            errMsg = we.getMessage();
         }
         else if (throwable instanceof InvalidRequestException){
             InvalidRequestException e = (InvalidRequestException)throwable;
-            return Response.status(e.getStatusCode()).entity(e.getMessage()).build();
+            status = e.getStatusCode();
+            errMsg = e.getMessage();
         }
         else {
             errMsg = "unknown error:" + throwable.getMessage();
         }
 
         t.printStackTrace();
-        return Response.status(Response.Status.BAD_REQUEST).entity(errMsg).build();
+        return Response.status(status).entity(new ErrMsg(errMsg)).build();
+    }
+
+    private static class ErrMsg {
+        private String err;
+
+        public ErrMsg(String msg) {
+            this.err = msg;
+        }
+
+        public String getErr() {
+            return err;
+        }
     }
 }

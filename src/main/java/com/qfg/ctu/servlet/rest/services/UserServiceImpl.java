@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public RestUser login(String userName, String password) throws Exception {
         User user = DaoFactory.getUserDao(conn).findByUserName(userName);
-        if (!user.checkPassword(password)) {
+        if ((null == user ) || (!user.checkPassword(password))) {
             throw new InvalidRequestException(Response.Status.UNAUTHORIZED, "Not allowed to access");
         }
 
