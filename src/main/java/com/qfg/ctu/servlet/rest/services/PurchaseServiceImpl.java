@@ -76,9 +76,37 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     @NeedDB
     @Override
+    public RestPurchase getById(Integer id) throws Exception {
+        Purchase innerPurchase = DaoFactory.getPurchaseDao(conn).findById(id);
+        RestPurchase purchase = new RestPurchase(innerPurchase);
+        purchase.sale = getUserName(innerPurchase.getSale());
+        purchase.items = getAllItems(innerPurchase.getId());
+
+        purchase.amount = 0;
+        purchase.amountConfirmed = 0;
+        purchase.items.forEach(n -> {
+            purchase.amount += n.amount;
+            purchase.amountConfirmed += n.amountConfirmed;
+        });
+
+        return purchase;
+    }
+
+    @NeedDB
+    @Override
     public List<RestPurchaseItem> getAllItems(Integer id) throws Exception {
         List<Purchase.PurchaseItem> items = getPurchaseItemDao(conn).findByPId(id);
-        return items.stream().map(RestPurchaseItem::new).collect(Collectors.toList());
+
+        return items.stream()
+                .map(RestPurchaseItem::new)
+                .peek(n -> {
+                    try {
+                        n.confirms = getAllConfirms(n.id);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                })
+                .collect(Collectors.toList());
     }
 
     @NeedDB

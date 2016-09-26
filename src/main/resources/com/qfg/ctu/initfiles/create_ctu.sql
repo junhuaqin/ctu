@@ -82,7 +82,7 @@ create table purchaseConfirm
     amount int not null default 0,
     sale int not null,
     confirmOn timestamp not null default now(),
-    foreign key (purchase_item_id) references purchaseItems(id) ON DELETE CASCADE,
+    foreign key (purchase_item_id) references purchaseItems(id) ON DELETE restrict,
     foreign key (sale) references accounts(id) ON DELETE restrict
 ) ENGINE=INNODB;
 

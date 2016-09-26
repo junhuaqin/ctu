@@ -26,6 +26,13 @@ public class PurchaseResource extends BaseResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @Path("{id: \\d+}")
+    public RestPurchase getById(@PathParam("id") int id) throws Exception {
+        return purchaseService.getById(id);
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
     @Path("{id: \\d+}/allItems")
     public List<RestPurchaseItem> getAllItems(@PathParam("id") int id) throws Exception {
         return purchaseService.getAllItems(id);
