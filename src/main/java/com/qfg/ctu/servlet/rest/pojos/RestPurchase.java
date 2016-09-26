@@ -15,6 +15,8 @@ public class RestPurchase {
     public long createdAt;
     public List<RestPurchaseItem> items;
     public int totalPrice;
+    public int amount;
+    public int amountConfirmed;
 
     public RestPurchase() {
 
