@@ -57,6 +57,7 @@ create table orderItems
 create table purchases
 (
     id int not null auto_increment primary key,
+    purchaseOrderId varchar(64) not null,
     sale int not null,
     createdOn timestamp not null default now(),
     totalPrice int not null default 0,

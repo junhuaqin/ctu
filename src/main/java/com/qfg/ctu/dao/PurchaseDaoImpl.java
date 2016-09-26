@@ -23,8 +23,8 @@ public class PurchaseDaoImpl extends AbstractDao<Purchase> implements PurchaseDa
 
     @Override
     public void save(Purchase obj) throws SQLException {
-        _update(connection, String.format("INSERT INTO %s (sale, totalPrice, createdOn) VALUES (?,?,?)", _tblPurchasesName),
-                obj.getSale(), obj.getTotalPrice(), obj.getCreatedAt());
+        _update(connection, String.format("INSERT INTO %s (purchaseOrderId, sale, totalPrice, createdOn) VALUES (?,?,?)", _tblPurchasesName),
+                obj.getPurchaseOrderId(), obj.getSale(), obj.getTotalPrice(), obj.getCreatedAt());
         obj.setId(_getLastId(connection));
     }
 
@@ -58,6 +58,7 @@ public class PurchaseDaoImpl extends AbstractDao<Purchase> implements PurchaseDa
     protected Purchase _loadRecord(ResultSet qrs) throws SQLException {
         Purchase purchase = new Purchase();
         purchase.setId(qrs.getInt("id"));
+        purchase.setPurchaseOrderId(qrs.getString("purchaseOrderId"));
         purchase.setSale(qrs.getInt("sale"));
         purchase.setCreatedAt(DateTimeUtil.mapTimestamp2LocalDateTime(qrs.getTimestamp("createdOn")));
         purchase.setTotalPrice(qrs.getInt("totalPrice"));

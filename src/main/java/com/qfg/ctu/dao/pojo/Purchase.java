@@ -9,6 +9,7 @@ import java.util.List;
  */
 public class Purchase {
     private int id;
+    private String purchaseOrderId;
     private int sale;
     private LocalDateTime createdAt;
     private List<PurchaseItem> items = new ArrayList<>();
@@ -20,6 +21,14 @@ public class Purchase {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getPurchaseOrderId() {
+        return purchaseOrderId;
+    }
+
+    public void setPurchaseOrderId(String purchaseOrderId) {
+        this.purchaseOrderId = purchaseOrderId;
     }
 
     public int getSale() {

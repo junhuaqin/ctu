@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
  */
 public class RestPurchase {
     public int id;
+    public String purchaseOrderId;
     public String sale;
     public long createdAt;
     public List<RestPurchaseItem> items;
@@ -24,6 +25,7 @@ public class RestPurchase {
 
     public RestPurchase(Purchase purchase) {
         id = purchase.getId();
+        purchaseOrderId = purchase.getPurchaseOrderId();
         createdAt = DateTimeUtil.getMilli(purchase.getCreatedAt());
         totalPrice = purchase.getTotalPrice();
         items = purchase.getItems().stream().map(RestPurchaseItem::new).collect(Collectors.toList());
@@ -32,6 +34,7 @@ public class RestPurchase {
     public Purchase toInner() {
         Purchase purchase = new Purchase();
         purchase.setId(id);
+        purchase.setPurchaseOrderId(purchaseOrderId);
         purchase.setTotalPrice(totalPrice);
 
         if (null != items) {
