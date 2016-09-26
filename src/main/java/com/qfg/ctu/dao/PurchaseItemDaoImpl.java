@@ -43,7 +43,7 @@ public class PurchaseItemDaoImpl extends AbstractDao<Purchase.PurchaseItem> impl
 
     @Override
     public Purchase.PurchaseItem findById(Integer id) throws SQLException {
-        return _get(connection, _sqlSelect + "AND id=?", id);
+        return _get(connection, _sqlSelect + "AND a.id=?", id);
     }
 
     @Override
