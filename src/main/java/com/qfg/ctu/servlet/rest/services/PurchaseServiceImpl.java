@@ -47,6 +47,9 @@ public class PurchaseServiceImpl implements PurchaseService {
 
         RestPurchase savedPurchase = new RestPurchase(innerPurchase);
         savedPurchase.sale = getUserName(userId);
+        savedPurchase.amount = 0;
+        savedPurchase.amountConfirmed = 0;
+        innerPurchase.getItems().forEach(n->savedPurchase.amount+=n.getAmount());
 
         return savedPurchase;
     }

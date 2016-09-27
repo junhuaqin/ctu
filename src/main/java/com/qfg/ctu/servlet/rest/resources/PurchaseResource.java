@@ -48,7 +48,6 @@ public class PurchaseResource extends BaseResource {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @Path("add")
     public RestPurchase add(RestPurchase posted) throws Exception {
         return purchaseService.add(getAdminId(), posted);
     }
