@@ -13,4 +13,5 @@ public interface UserDao extends GenericDao<User, Integer>  {
     User findByUserName(String name) throws SQLException;
 
     void setLastLogin(Integer id, LocalDateTime time) throws SQLException;
+    void changePassword(Integer id, String password) throws SQLException;
 }

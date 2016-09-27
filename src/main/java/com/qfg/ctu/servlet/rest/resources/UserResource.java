@@ -1,5 +1,6 @@
 package com.qfg.ctu.servlet.rest.resources;
 
+import com.qfg.ctu.servlet.rest.pojos.RestChangePassword;
 import com.qfg.ctu.servlet.rest.pojos.RestUser;
 import com.qfg.ctu.servlet.rest.services.UserService;
 
@@ -43,8 +44,15 @@ public class UserResource extends BaseResource{
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @Path("add")
     public RestUser add(RestUser posted) throws Exception {
         return userService.add(posted);
+    }
+
+    @PUT
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("changePassword")
+    public RestUser changePassword(RestChangePassword posted) throws Exception {
+        return userService.changePassword(posted);
     }
 }

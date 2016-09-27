@@ -55,6 +55,11 @@ public class UserDaoImpl extends AbstractDao<User> implements UserDao {
     }
 
     @Override
+    public void changePassword(Integer id, String password) throws SQLException {
+        _update(connection, String.format("UPDATE %s SET password=? WHERE id=?", _tblName), password, id);
+    }
+
+    @Override
     public List<User> findAll() throws SQLException {
         return _getArray(connection, _sqlSelect);
     }

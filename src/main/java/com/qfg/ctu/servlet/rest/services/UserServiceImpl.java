@@ -4,6 +4,7 @@ import com.qfg.ctu.annotations.NeedDB;
 import com.qfg.ctu.dao.DaoFactory;
 import com.qfg.ctu.dao.pojo.User;
 import com.qfg.ctu.servlet.rest.exception.InvalidRequestException;
+import com.qfg.ctu.servlet.rest.pojos.RestChangePassword;
 import com.qfg.ctu.servlet.rest.pojos.RestUser;
 import com.qfg.ctu.util.DateTimeUtil;
 
@@ -40,7 +41,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public RestUser login(String userName, String password) throws Exception {
         User user = DaoFactory.getUserDao(conn).findByUserName(userName);
-        if ((null == user ) || (!user.checkPassword(password))) {
+        if ((null == user ) || (!user.isActive()) || (!user.checkPassword(password))) {
             throw new InvalidRequestException(Response.Status.UNAUTHORIZED, "Not allowed to access");
         }
 
@@ -59,5 +60,18 @@ public class UserServiceImpl implements UserService {
         DaoFactory.getUserDao(conn).save(innerUser);
 
         return new RestUser(innerUser);
+    }
+
+    @NeedDB
+    @Override
+    public RestUser changePassword(RestChangePassword restChangePassword) throws Exception {
+        User user = DaoFactory.getUserDao(conn).findByUserName(restChangePassword.userName);
+        if ((null == user ) || (!user.isActive()) || (!user.checkPassword(restChangePassword.password))) {
+            throw new InvalidRequestException(Response.Status.UNAUTHORIZED, "Not allowed to access");
+        }
+
+        DaoFactory.getUserDao(conn).changePassword(user.getId(), restChangePassword.newPassword);
+
+        return new RestUser(user);
     }
 }

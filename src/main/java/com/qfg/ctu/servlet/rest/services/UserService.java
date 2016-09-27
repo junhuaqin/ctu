@@ -1,5 +1,6 @@
 package com.qfg.ctu.servlet.rest.services;
 
+import com.qfg.ctu.servlet.rest.pojos.RestChangePassword;
 import com.qfg.ctu.servlet.rest.pojos.RestUser;
 import org.jvnet.hk2.annotations.Service;
 
@@ -15,4 +16,5 @@ public interface UserService {
     List<RestUser> getAll() throws Exception;
     RestUser login(String userName, String password) throws Exception;
     RestUser add(RestUser user) throws Exception;
+    RestUser changePassword(RestChangePassword restChangePassword) throws Exception;
 }
