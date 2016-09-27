@@ -34,7 +34,12 @@ public class ProductDaoImpl extends AbstractDao<Product> implements ProductDao {
 
     @Override
     public void minusStore(String id, int count) throws SQLException {
-        _update(connection, String.format("UPDATE %s SET store=store-? WHERE id=?", _tblName), count, id);
+        plusStore(id, -count);
+    }
+
+    @Override
+    public void plusStore(String id, int count) throws SQLException {
+        _update(connection, String.format("UPDATE %s SET store=store+? WHERE id=?", _tblName), count, id);
     }
 
     @Override

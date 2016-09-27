@@ -10,4 +10,5 @@ import java.sql.SQLException;
 public interface ProductDao extends GenericDao<Product, String> {
 
     void minusStore(String id, int count) throws SQLException;
+    void plusStore(String id, int count) throws SQLException;
 }

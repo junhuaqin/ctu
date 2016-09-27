@@ -14,8 +14,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.qfg.ctu.dao.DaoFactory.getPurchaseItemDao;
-
 /**
  * Created by rbtq on 9/20/16.
  */
@@ -39,7 +37,7 @@ public class PurchaseServiceImpl implements PurchaseService {
         DaoFactory.getPurchaseDao(conn).save(innerPurchase);
         innerPurchase.getItems().forEach(n -> {
             try {
-                getPurchaseItemDao(conn).save(innerPurchase.getId(), n);
+                DaoFactory.getPurchaseItemDao(conn).save(innerPurchase.getId(), n);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -98,7 +96,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     @NeedDB
     @Override
     public List<RestPurchaseItem> getAllItems(Integer id) throws Exception {
-        List<Purchase.PurchaseItem> items = getPurchaseItemDao(conn).findByPId(id);
+        List<Purchase.PurchaseItem> items = DaoFactory.getPurchaseItemDao(conn).findByPId(id);
 
         return items.stream()
                 .map(RestPurchaseItem::new)
@@ -131,7 +129,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     @Override
     public RestPurchaseItem addItem(Integer id, RestPurchaseItem item) throws Exception {
         Purchase.PurchaseItem innerItem = item.toInner();
-        getPurchaseItemDao(conn).save(id, innerItem);
+        DaoFactory.getPurchaseItemDao(conn).save(id, innerItem);
         DaoFactory.getPurchaseDao(conn).addTotalPrice(id, innerItem.getUnitPrice()*innerItem.getAmount());
 
         return new RestPurchaseItem(innerItem);
@@ -145,7 +143,9 @@ public class PurchaseServiceImpl implements PurchaseService {
         innerConfirm.setSale(userId);
 
         DaoFactory.getPurchaseConfirmDao(conn).save(id, innerConfirm);
-        getPurchaseItemDao(conn).confirm(id, innerConfirm.getAmount());
+        DaoFactory.getPurchaseItemDao(conn).confirm(id, innerConfirm.getAmount());
+        Purchase.PurchaseItem purchaseItem = DaoFactory.getPurchaseItemDao(conn).findById(id);
+        DaoFactory.getProductDao(conn).plusStore(purchaseItem.getBarCode(), innerConfirm.getAmount());
 
         RestPurchaseConfirm savedConfirm = new RestPurchaseConfirm(innerConfirm);
         savedConfirm.sale = getUserName(userId);
@@ -156,9 +156,9 @@ public class PurchaseServiceImpl implements PurchaseService {
     @NeedDB
     @Override
     public RestPurchaseItem updateItem(Integer id, RestPurchaseItem item) throws Exception {
-        Purchase.PurchaseItem oldItem = getPurchaseItemDao(conn).findById(item.id);
+        Purchase.PurchaseItem oldItem = DaoFactory.getPurchaseItemDao(conn).findById(item.id);
         Purchase.PurchaseItem innerItem = item.toInner();
-        getPurchaseItemDao(conn).update(innerItem);
+        DaoFactory.getPurchaseItemDao(conn).update(innerItem);
         int changedPrice = item.unitPrice*item.amount - oldItem.getUnitPrice()*oldItem.getAmount();
         DaoFactory.getPurchaseDao(conn).addTotalPrice(id, changedPrice);
 
@@ -174,7 +174,7 @@ public class PurchaseServiceImpl implements PurchaseService {
         innerConfirm.setSale(userId);
 
         DaoFactory.getPurchaseConfirmDao(conn).update(innerConfirm);
-        getPurchaseItemDao(conn).confirm(id, innerConfirm.getAmount()-oldConfirm.getAmount());
+        DaoFactory.getPurchaseItemDao(conn).confirm(id, innerConfirm.getAmount()-oldConfirm.getAmount());
 
         RestPurchaseConfirm savedConfirm = new RestPurchaseConfirm(innerConfirm);
         savedConfirm.sale = getUserName(userId);
@@ -198,9 +198,9 @@ public class PurchaseServiceImpl implements PurchaseService {
     @NeedDB
     @Override
     public Boolean deleteItem(Integer id, Integer itemId) throws Exception {
-        Purchase.PurchaseItem oldItem = getPurchaseItemDao(conn).findById(itemId);
+        Purchase.PurchaseItem oldItem = DaoFactory.getPurchaseItemDao(conn).findById(itemId);
         DaoFactory.getPurchaseDao(conn).addTotalPrice(id, -oldItem.getAmount()*oldItem.getUnitPrice());
-        getPurchaseItemDao(conn).delete(itemId);
+        DaoFactory.getPurchaseItemDao(conn).delete(itemId);
         return true;
     }
 
@@ -208,7 +208,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     @Override
     public Boolean deleteConfirm(Integer id, Integer confirmId) throws Exception {
         Purchase.PurchaseItem.Confirm oldConfirm = DaoFactory.getPurchaseConfirmDao(conn).findById(confirmId);
-        getPurchaseItemDao(conn).confirm(id, -oldConfirm.getAmount());
+        DaoFactory.getPurchaseItemDao(conn).confirm(id, -oldConfirm.getAmount());
         DaoFactory.getPurchaseConfirmDao(conn).delete(confirmId);
         return true;
     }
