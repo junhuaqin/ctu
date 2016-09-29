@@ -1,13 +1,23 @@
 package com.qfg.ctu.servlet.rest.resources;
 
+import com.qfg.ctu.servlet.rest.exception.InvalidRequestException;
+import com.qfg.ctu.servlet.rest.pojos.RestImportPurchase;
 import com.qfg.ctu.servlet.rest.pojos.RestPurchase;
 import com.qfg.ctu.servlet.rest.pojos.RestPurchaseConfirm;
 import com.qfg.ctu.servlet.rest.pojos.RestPurchaseItem;
 import com.qfg.ctu.servlet.rest.services.PurchaseService;
+import org.apache.commons.fileupload.FileItemIterator;
+import org.apache.commons.fileupload.FileItemStream;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.fileupload.util.Streams;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -17,6 +27,9 @@ import java.util.List;
 public class PurchaseResource extends BaseResource {
     @Inject
     private PurchaseService purchaseService;
+
+    @Context
+    protected HttpServletRequest request;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -50,6 +63,40 @@ public class PurchaseResource extends BaseResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public RestPurchase add(RestPurchase posted) throws Exception {
         return purchaseService.add(getAdminId(), posted);
+    }
+
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Path("import")
+    public RestImportPurchase importOrder() throws Exception {
+        ServletFileUpload upload = new ServletFileUpload();
+        String service = "";
+        String document = "";
+        FileItemIterator it = upload.getItemIterator(request);
+        while (it.hasNext()) {
+            FileItemStream item = it.next();
+            String name = item.getFieldName();
+            InputStream stream = item.openStream();
+            if (item.isFormField()) {
+                if (name.equalsIgnoreCase("service")) {
+                    service = Streams.asString(stream);
+                }
+            }
+            else {
+                if (name.equalsIgnoreCase("file")) {
+                    document = Streams.asString(stream);
+                }
+            }
+        }
+
+        if (!service.equalsIgnoreCase("tbh")) {
+            throw new InvalidRequestException(Response.Status.BAD_REQUEST, "Don't support " + service);
+        } else if (document.isEmpty()) {
+            throw new InvalidRequestException(Response.Status.BAD_REQUEST, "Please upload document");
+        }
+
+        return purchaseService.importTBHOrder(document);
     }
 
     @POST

@@ -1,5 +1,6 @@
 package com.qfg.ctu.servlet.rest.services;
 
+import com.qfg.ctu.servlet.rest.pojos.RestImportPurchase;
 import com.qfg.ctu.servlet.rest.pojos.RestPurchase;
 import com.qfg.ctu.servlet.rest.pojos.RestPurchaseConfirm;
 import com.qfg.ctu.servlet.rest.pojos.RestPurchaseItem;
@@ -28,4 +29,6 @@ public interface PurchaseService {
     Boolean deletePurchase(Integer id) throws Exception;
     Boolean deleteItem(Integer id, Integer itemId) throws Exception;
     Boolean deleteConfirm(Integer id, Integer confirmId) throws Exception;
+
+    RestImportPurchase importTBHOrder(String document) throws Exception;
 }

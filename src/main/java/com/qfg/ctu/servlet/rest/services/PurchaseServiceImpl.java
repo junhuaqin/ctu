@@ -3,6 +3,7 @@ package com.qfg.ctu.servlet.rest.services;
 import com.qfg.ctu.annotations.NeedDB;
 import com.qfg.ctu.dao.DaoFactory;
 import com.qfg.ctu.dao.pojo.Purchase;
+import com.qfg.ctu.servlet.rest.pojos.RestImportPurchase;
 import com.qfg.ctu.servlet.rest.pojos.RestPurchase;
 import com.qfg.ctu.servlet.rest.pojos.RestPurchaseConfirm;
 import com.qfg.ctu.servlet.rest.pojos.RestPurchaseItem;
@@ -11,7 +12,10 @@ import com.qfg.ctu.util.DateTimeUtil;
 import javax.inject.Inject;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -19,6 +23,8 @@ import java.util.stream.Collectors;
  */
 public class PurchaseServiceImpl implements PurchaseService {
     public final static String NAME = "com.qfg.ctu.servlet.rest.services.PurchaseServiceImpl";
+    private final static Logger LOGGER = Logger.getLogger(PurchaseServiceImpl.class.getName());
+
     @Inject
     Connection conn;
 
@@ -211,5 +217,41 @@ public class PurchaseServiceImpl implements PurchaseService {
         DaoFactory.getPurchaseItemDao(conn).confirm(id, -oldConfirm.getAmount());
         DaoFactory.getPurchaseConfirmDao(conn).delete(confirmId);
         return true;
+    }
+
+    @NeedDB
+    @Override
+    public RestImportPurchase importTBHOrder(String document) throws Exception {
+        LOGGER.log(Level.INFO, "receive:"+document);
+
+        RestImportPurchase importPurchase = new RestImportPurchase();
+        importPurchase.known = new RestPurchase();
+        importPurchase.unknown = new RestPurchase();
+
+        RestPurchaseItem item = new RestPurchaseItem();
+        item.amount = 1;
+        item.barCode = "12345";
+        item.title = "test";
+        item.unitPrice = 10000;
+
+        RestPurchaseItem item2 = new RestPurchaseItem();
+        item2.amount = 1;
+        item2.barCode = "12346";
+        item2.title = "test2";
+        item2.unitPrice = 10000;
+
+        importPurchase.known.purchaseOrderId="test for import";
+        importPurchase.known.amount = 2;
+        importPurchase.known.totalPrice = 20000;
+        importPurchase.known.items = new ArrayList<>();
+        importPurchase.known.items.add(item);
+        importPurchase.known.items.add(item2);
+
+        importPurchase.unknown.amount = 1;
+        importPurchase.unknown.totalPrice = 10000;
+        importPurchase.unknown.items = new ArrayList<>();
+        importPurchase.unknown.items.add(item);
+
+        return importPurchase;
     }
 }
