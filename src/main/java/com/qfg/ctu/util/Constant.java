@@ -18,4 +18,10 @@ public class Constant {
     public final static String TBL_PURCHASE_ITEMS   = "purchaseItems";
     public final static String TBL_PURCHASE_CONFIRMS   = "purchaseConfirm";
     public final static String AUTH = "Authorization";
+
+    public final static String TBH_ORDER_ID = "订单编号";
+    public final static String TBH_PRODUCT_ID = "商品编码";
+    public final static String TBH_PRODUCT_NAME = "商品名称";
+    public final static String TBH_PRODUCT_AMOUNT = "数量";
+    public final static String TBH_PRICE_AMOUNT = "金额";
 }

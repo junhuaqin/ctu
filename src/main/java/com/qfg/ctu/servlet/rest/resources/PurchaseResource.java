@@ -72,7 +72,7 @@ public class PurchaseResource extends BaseResource {
     public RestImportPurchase importOrder() throws Exception {
         ServletFileUpload upload = new ServletFileUpload();
         String service = "";
-        String document = "";
+        InputStream document = null;
         FileItemIterator it = upload.getItemIterator(request);
         while (it.hasNext()) {
             FileItemStream item = it.next();
@@ -85,15 +85,13 @@ public class PurchaseResource extends BaseResource {
             }
             else {
                 if (name.equalsIgnoreCase("file")) {
-                    document = Streams.asString(stream);
+                    document = stream;
                 }
             }
         }
 
         if (!service.equalsIgnoreCase("tbh")) {
             throw new InvalidRequestException(Response.Status.BAD_REQUEST, "Don't support " + service);
-        } else if (document.isEmpty()) {
-            throw new InvalidRequestException(Response.Status.BAD_REQUEST, "Please upload document");
         }
 
         return purchaseService.importTBHOrder(document);

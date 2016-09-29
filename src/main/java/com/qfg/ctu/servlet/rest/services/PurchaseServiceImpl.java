@@ -2,19 +2,26 @@ package com.qfg.ctu.servlet.rest.services;
 
 import com.qfg.ctu.annotations.NeedDB;
 import com.qfg.ctu.dao.DaoFactory;
+import com.qfg.ctu.dao.pojo.Product;
 import com.qfg.ctu.dao.pojo.Purchase;
+import com.qfg.ctu.servlet.rest.exception.InvalidRequestException;
 import com.qfg.ctu.servlet.rest.pojos.RestImportPurchase;
 import com.qfg.ctu.servlet.rest.pojos.RestPurchase;
 import com.qfg.ctu.servlet.rest.pojos.RestPurchaseConfirm;
 import com.qfg.ctu.servlet.rest.pojos.RestPurchaseItem;
+import com.qfg.ctu.util.Constant;
 import com.qfg.ctu.util.DateTimeUtil;
+import jxl.Cell;
+import jxl.Sheet;
+import jxl.Workbook;
 
 import javax.inject.Inject;
+import javax.ws.rs.core.Response;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -221,36 +228,82 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     @NeedDB
     @Override
-    public RestImportPurchase importTBHOrder(String document) throws Exception {
-        LOGGER.log(Level.INFO, "receive:"+document);
-
+    public RestImportPurchase importTBHOrder(InputStream inputStream) throws Exception {
         RestImportPurchase importPurchase = new RestImportPurchase();
         importPurchase.known = new RestPurchase();
         importPurchase.unknown = new RestPurchase();
 
-        RestPurchaseItem item = new RestPurchaseItem();
-        item.amount = 1;
-        item.barCode = "12345";
-        item.title = "test";
-        item.unitPrice = 10000;
-
-        RestPurchaseItem item2 = new RestPurchaseItem();
-        item2.amount = 1;
-        item2.barCode = "12346";
-        item2.title = "test2";
-        item2.unitPrice = 10000;
-
-        importPurchase.known.purchaseOrderId="test for import";
-        importPurchase.known.amount = 2;
-        importPurchase.known.totalPrice = 20000;
         importPurchase.known.items = new ArrayList<>();
-        importPurchase.known.items.add(item);
-        importPurchase.known.items.add(item2);
-
-        importPurchase.unknown.amount = 1;
-        importPurchase.unknown.totalPrice = 10000;
         importPurchase.unknown.items = new ArrayList<>();
-        importPurchase.unknown.items.add(item);
+
+        Workbook rwb= Workbook.getWorkbook(inputStream);
+        Sheet rs=rwb.getSheet(0);
+        int cols=rs.getColumns();
+        int rows=rs.getRows();
+
+        Cell[] ids = null;
+        Cell[] names = null;
+        Cell[] amounts = null;
+        Cell[] prices = null;
+
+        for (int i = 1; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                String id=rs.getCell(j, i).getContents();
+                if (id.equals(Constant.TBH_ORDER_ID)) {
+                    importPurchase.known.purchaseOrderId= rs.getCell(j, i+1).getContents();
+                } else if (id.equals(Constant.TBH_PRODUCT_ID)) {
+                    ids = rs.getColumn(j);
+                } else if (id.equals(Constant.TBH_PRODUCT_NAME)) {
+                    names = rs.getColumn(j);
+                } else if (id.equals(Constant.TBH_PRODUCT_AMOUNT)) {
+                    amounts = rs.getColumn(j);
+                } else if (id.equals(Constant.TBH_PRICE_AMOUNT)) {
+                    prices = rs.getColumn(j);
+                }
+            }
+
+            if (null != ids) {
+                break;
+            }
+        }
+
+        if (null == ids || null == names || null == amounts || null == prices
+          || ids.length != names.length || names.length != amounts.length || amounts.length != prices.length) {
+            inputStream.close();
+            throw new InvalidRequestException(Response.Status.BAD_REQUEST, "无效的订单文件");
+        }
+
+        for (int i = 0; i < ids.length; i++) {
+            if (ids[i].getContents().trim().isEmpty()) {
+                continue;
+            }
+
+            RestPurchaseItem item = new RestPurchaseItem();
+            item.barCode = ids[i].getContents();
+            item.amount = Integer.valueOf(amounts[i].getContents());
+            item.unitPrice = Integer.valueOf(prices[i].getContents()) * 100 / item.amount;
+
+            Product product = DaoFactory.getProductDao(conn).findById(item.barCode);
+            if (null == product) {
+                item.title = product.getTitle();
+                importPurchase.unknown.items.add(item);
+            } else {
+                item.title = names[i].getContents();
+                importPurchase.known.items.add(item);
+            }
+        }
+
+        inputStream.close();
+
+        importPurchase.known.items.forEach(n->{
+            importPurchase.known.amount += n.amount;
+            importPurchase.known.totalPrice += n.amount * n.unitPrice;
+        });
+
+        importPurchase.unknown.items.forEach(n->{
+            importPurchase.unknown.amount += n.amount;
+            importPurchase.unknown.totalPrice += n.amount * n.unitPrice;
+        });
 
         return importPurchase;
     }

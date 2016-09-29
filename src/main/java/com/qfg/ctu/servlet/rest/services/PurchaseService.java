@@ -6,6 +6,7 @@ import com.qfg.ctu.servlet.rest.pojos.RestPurchaseConfirm;
 import com.qfg.ctu.servlet.rest.pojos.RestPurchaseItem;
 import org.jvnet.hk2.annotations.Service;
 
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -30,5 +31,5 @@ public interface PurchaseService {
     Boolean deleteItem(Integer id, Integer itemId) throws Exception;
     Boolean deleteConfirm(Integer id, Integer confirmId) throws Exception;
 
-    RestImportPurchase importTBHOrder(String document) throws Exception;
+    RestImportPurchase importTBHOrder(InputStream inputStream) throws Exception;
 }
