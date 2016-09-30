@@ -17,6 +17,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.List;
 
@@ -72,7 +74,8 @@ public class PurchaseResource extends BaseResource {
     public RestImportPurchase importOrder() throws Exception {
         ServletFileUpload upload = new ServletFileUpload();
         String service = "";
-        InputStream document = null;
+        String document = "";
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         FileItemIterator it = upload.getItemIterator(request);
         while (it.hasNext()) {
             FileItemStream item = it.next();
@@ -85,7 +88,7 @@ public class PurchaseResource extends BaseResource {
             }
             else {
                 if (name.equalsIgnoreCase("file")) {
-                    document = stream;
+                    Streams.copy(stream, outputStream, false);
                 }
             }
         }
@@ -94,7 +97,7 @@ public class PurchaseResource extends BaseResource {
             throw new InvalidRequestException(Response.Status.BAD_REQUEST, "Don't support " + service);
         }
 
-        return purchaseService.importTBHOrder(document);
+        return purchaseService.importTBHOrder(new ByteArrayInputStream(outputStream.toByteArray()));
     }
 
     @POST

@@ -248,7 +248,7 @@ public class PurchaseServiceImpl implements PurchaseService {
 
         for (int i = 1; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                String id=rs.getCell(j, i).getContents();
+                String id=rs.getCell(j, i).getContents().trim();
                 if (id.equals(Constant.TBH_ORDER_ID)) {
                     importPurchase.known.purchaseOrderId= rs.getCell(j, i+1).getContents();
                 } else if (id.equals(Constant.TBH_PRODUCT_ID)) {
@@ -274,22 +274,31 @@ public class PurchaseServiceImpl implements PurchaseService {
         }
 
         for (int i = 0; i < ids.length; i++) {
-            if (ids[i].getContents().trim().isEmpty()) {
+            String id = ids[i].getContents().trim();
+//            LOGGER.log(Level.INFO, Constant.TBH_ORDER_ID + ":" + id);
+            if (id.isEmpty() || id.equals(Constant.TBH_PRODUCT_ID)) {
                 continue;
             }
 
             RestPurchaseItem item = new RestPurchaseItem();
             item.barCode = ids[i].getContents();
-            item.amount = Integer.valueOf(amounts[i].getContents());
-            item.unitPrice = Integer.valueOf(prices[i].getContents()) * 100 / item.amount;
+            item.amount = Integer.valueOf(amounts[i].getContents().replace(",", ""));
+            if (item.amount == 0) {
+//                LOGGER.log(Level.INFO, "amount is zero:"+item.barCode);
+                continue;
+            }
+
+            item.unitPrice = (int)(Float.valueOf(prices[i].getContents().replace(",", "")) * 100) / item.amount;
 
             Product product = DaoFactory.getProductDao(conn).findById(item.barCode);
             if (null == product) {
-                item.title = product.getTitle();
-                importPurchase.unknown.items.add(item);
-            } else {
                 item.title = names[i].getContents();
+                importPurchase.unknown.items.add(item);
+//                LOGGER.log(Level.INFO, "unknown:"+(new Gson()).toJson(item));
+            } else {
+                item.title = product.getTitle();
                 importPurchase.known.items.add(item);
+//                LOGGER.log(Level.INFO, "known:"+(new Gson()).toJson(item));
             }
         }
 
