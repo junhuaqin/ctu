@@ -121,6 +121,7 @@ public class PurchaseResource extends BaseResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("{id: \\d+}/putItem")
     public RestPurchaseItem putItem(@PathParam("id") int id, RestPurchaseItem posted) throws Exception {
+        posted.id = id;
         return purchaseService.updateItem(id, posted);
     }
 
@@ -129,6 +130,7 @@ public class PurchaseResource extends BaseResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("{id: \\d+}/putConfirm")
     public RestPurchaseConfirm putConfirm(@PathParam("id") int id, RestPurchaseConfirm posted) throws Exception {
+        posted.id = id;
         return purchaseService.updateConfirm(getAdminId(), id, posted);
     }
 
