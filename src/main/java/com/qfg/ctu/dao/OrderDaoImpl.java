@@ -18,9 +18,9 @@ import java.util.Optional;
  */
 public class OrderDaoImpl extends AbstractDao<OrderJoinItem> implements OrderDao {
     private Connection connection;
-    private final String _tblOrdersName = String.format("%s.%s", Constant.DB_CTU, Constant.TBL_ORDERS);
-    private final String _tblOrderItemName = String.format("%s.%s", Constant.DB_CTU, Constant.TBL_ORDERITEMS);
-    private final String _tblProducts = String.format("%s.%s", Constant.DB_CTU, Constant.TBL_PRODUCTS);
+    private final String _tblOrdersName = String.format("%s", Constant.TBL_ORDERS);
+    private final String _tblOrderItemName = String.format("%s", Constant.TBL_ORDERITEMS);
+    private final String _tblProducts = String.format("%s", Constant.TBL_PRODUCTS);
     private final String _sqlSelect = String.format("select a.*, b.*, c.title from %s a, %s b, %s c where a.id=b.order_id and b.product_id=c.id ", _tblOrdersName, _tblOrderItemName, _tblProducts);
 
     public OrderDaoImpl(Connection connection) {

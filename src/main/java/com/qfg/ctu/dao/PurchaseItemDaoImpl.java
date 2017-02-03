@@ -13,8 +13,8 @@ import java.util.List;
  */
 public class PurchaseItemDaoImpl extends AbstractDao<Purchase.PurchaseItem> implements PurchaseItemDao {
     private Connection connection;
-    private final String _tblPurchaseItemName = String.format("%s.%s", Constant.DB_CTU, Constant.TBL_PURCHASE_ITEMS);
-    private final String _tblProducts = String.format("%s.%s", Constant.DB_CTU, Constant.TBL_PRODUCTS);
+    private final String _tblPurchaseItemName = String.format("%s", Constant.TBL_PURCHASE_ITEMS);
+    private final String _tblProducts = String.format("%s", Constant.TBL_PRODUCTS);
 
     private final String _sqlSelect = String.format("SELECT a.*, b.title FROM %s a, %s b WHERE a.product_id=b.id ",
             _tblPurchaseItemName, _tblProducts);

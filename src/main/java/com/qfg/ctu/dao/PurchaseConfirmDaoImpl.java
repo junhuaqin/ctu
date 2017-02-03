@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class PurchaseConfirmDaoImpl extends AbstractDao<Purchase.PurchaseItem.Confirm> implements PurchaseConfirmDao {
     private Connection connection;
-    private final String _tblPurchaseConfirmName = String.format("%s.%s", Constant.DB_CTU, Constant.TBL_PURCHASE_CONFIRMS);
+    private final String _tblPurchaseConfirmName = String.format("%s", Constant.TBL_PURCHASE_CONFIRMS);
     private final String _sqlSelect = String.format("SELECT * FROM %s ", _tblPurchaseConfirmName);
 
     public PurchaseConfirmDaoImpl(Connection connection) {

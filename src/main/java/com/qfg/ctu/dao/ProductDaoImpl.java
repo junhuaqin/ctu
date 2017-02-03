@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class ProductDaoImpl extends AbstractDao<Product> implements ProductDao {
     private Connection connection;
-    private final String _tblName = String.format("%s.%s", Constant.DB_CTU, Constant.TBL_PRODUCTS);
+    private final String _tblName = String.format("%s", Constant.TBL_PRODUCTS);
     private final String _sqlSelect = String.format("SELECT * FROM %s ", _tblName);
 
     public ProductDaoImpl(Connection connection) {

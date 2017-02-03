@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class PurchaseDaoImpl extends AbstractDao<Purchase> implements PurchaseDao {
     private Connection connection;
-    private final String _tblPurchasesName = String.format("%s.%s", Constant.DB_CTU, Constant.TBL_PURCHASES);
+    private final String _tblPurchasesName = String.format("%s", Constant.TBL_PURCHASES);
     private final String _sqlSelect = String.format("SELECT * FROM %s ", _tblPurchasesName);
 
     public PurchaseDaoImpl(Connection connection) {
