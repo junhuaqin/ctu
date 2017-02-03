@@ -27,6 +27,11 @@ public class AuthFilter implements ContainerRequestFilter {
 
     @Override
     public void filter(ContainerRequestContext request) throws WebApplicationException {
+        String company = request.getHeaderString(BaseResource.HEADER_PARAM_COMPANY);
+        if (StringUtil.isNullOrEmpty(company)) {
+            throw new WebApplicationException("please enter company", Response.Status.UNAUTHORIZED);
+        }
+
         if (_needAuth(request)) {
             String auth = request.getHeaderString(Constant.AUTH);
             if (StringUtil.isNullOrEmpty(auth)) {
@@ -34,14 +39,12 @@ public class AuthFilter implements ContainerRequestFilter {
             }
 
             auth = auth.trim();
-            String[] lap = auth.split(":", 3);
-            if (null == lap || lap.length != 3) {
+            String[] lap = auth.split(":", 2);
+            if (null == lap || lap.length != 2) {
                 throw new WebApplicationException(Response.Status.UNAUTHORIZED);
             } else {
-                request.getHeaders().add(BaseResource.HEADER_PARAM_COMPANY, lap[0]);
-
                 try {
-                    RestUser user = new AOPServiceFactory(lap[0]).getUserService().login(lap[1], lap[2]);
+                    RestUser user = new AOPServiceFactory(company).getUserService().login(lap[0], lap[1]);
                     request.getHeaders().add(BaseResource.HEADER_PARAM_USER_ID, user.id + "");
                 } catch (Exception e) {
                     throw new WebApplicationException(Response.Status.UNAUTHORIZED);
