@@ -3,12 +3,11 @@ package com.qfg.ctu.servlet.rest.filter;
 import com.qfg.ctu.servlet.rest.pojos.RestUser;
 import com.qfg.ctu.servlet.rest.resources.BaseResource;
 import com.qfg.ctu.servlet.rest.resources.UserResource;
-import com.qfg.ctu.servlet.rest.services.UserService;
+import com.qfg.ctu.servlet.rest.services.factory.AOPServiceFactory;
 import com.qfg.ctu.util.Constant;
 import com.qfg.ctu.util.StringUtil;
 
 import javax.annotation.Priority;
-import javax.inject.Inject;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -26,9 +25,6 @@ import java.util.logging.Logger;
 public class AuthFilter implements ContainerRequestFilter {
     private final static Logger LOGGER = Logger.getLogger(AuthFilter.class.getName());
 
-    @Inject
-    private UserService userService;
-
     @Override
     public void filter(ContainerRequestContext request) throws WebApplicationException {
         if (_needAuth(request)) {
@@ -38,12 +34,14 @@ public class AuthFilter implements ContainerRequestFilter {
             }
 
             auth = auth.trim();
-            String[] lap = auth.split(":", 2);
-            if (null == lap || lap.length != 2) {
+            String[] lap = auth.split(":", 3);
+            if (null == lap || lap.length != 3) {
                 throw new WebApplicationException(Response.Status.UNAUTHORIZED);
             } else {
+                request.getHeaders().add(BaseResource.HEADER_PARAM_COMPANY, lap[0]);
+
                 try {
-                    RestUser user = userService.login(lap[0], lap[1]);
+                    RestUser user = new AOPServiceFactory(lap[0]).getUserService().login(lap[1], lap[2]);
                     request.getHeaders().add(BaseResource.HEADER_PARAM_USER_ID, user.id + "");
                 } catch (Exception e) {
                     throw new WebApplicationException(Response.Status.UNAUTHORIZED);

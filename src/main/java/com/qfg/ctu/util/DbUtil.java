@@ -72,6 +72,15 @@ public class DbUtil {
         return count > 0;
     }
 
+    public static boolean changeDb(Connection conn, String dbName) throws SQLException {
+        if (conn != null) {
+            executeUpdate(conn, "use " + dbName);
+            return true;
+        }
+
+        return false;
+    }
+
 
     public static void closeQuietly(Connection conn) {
         if(conn != null) {

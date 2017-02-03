@@ -1,5 +1,8 @@
 package com.qfg.ctu.servlet.rest.resources;
 
+import com.qfg.ctu.servlet.rest.services.factory.AOPServiceFactory;
+import com.qfg.ctu.servlet.rest.services.factory.ServiceFactory;
+
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 
@@ -8,6 +11,7 @@ import javax.ws.rs.core.HttpHeaders;
  */
 public class BaseResource {
     public static final String HEADER_PARAM_USER_ID = "AuthorizedUser";
+    public static final String HEADER_PARAM_COMPANY = "ctuCompany";
 
     @Context
     protected HttpHeaders headers;
@@ -19,5 +23,13 @@ public class BaseResource {
             adminId = Integer.parseInt(userIdStr);
         }
         return adminId;
+    }
+
+    public String getCompany() {
+        return headers.getHeaderString(HEADER_PARAM_COMPANY);
+    }
+
+    public ServiceFactory getServiceFactory() {
+        return new AOPServiceFactory(getCompany());
     }
 }

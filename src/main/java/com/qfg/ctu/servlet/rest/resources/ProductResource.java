@@ -1,9 +1,7 @@
 package com.qfg.ctu.servlet.rest.resources;
 
 import com.qfg.ctu.servlet.rest.pojos.RestProduct;
-import com.qfg.ctu.servlet.rest.services.ProductService;
 
-import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -17,34 +15,31 @@ import java.util.logging.Logger;
 public class ProductResource extends BaseResource{
     private final static Logger LOGGER = Logger.getLogger(ProductResource.class.getName());
 
-    @Inject
-    private ProductService productService;
-
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<RestProduct> getAll() throws Exception {
-        return productService.getAll();
+        return getServiceFactory().getProductService().getAll();
     }
 
     @GET
     @Path("{barCode}")
     @Produces(MediaType.APPLICATION_JSON)
     public RestProduct getByBarcode(@PathParam("barCode") String id) throws Exception {
-        return productService.getByBarcode(id);
+        return getServiceFactory().getProductService().getByBarcode(id);
     }
 
     @GET
     @Path("qr/{qrCode}")
     @Produces(MediaType.APPLICATION_JSON)
     public RestProduct getByQR(@PathParam("qrCode") String id) throws Exception {
-        return productService.getByQR(id);
+        return getServiceFactory().getProductService().getByQR(id);
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public RestProduct addProduct(@NotNull RestProduct product) throws Exception {
-        return productService.addProduct(product);
+        return getServiceFactory().getProductService().addProduct(product);
     }
 
     @PUT
@@ -53,13 +48,13 @@ public class ProductResource extends BaseResource{
     @Consumes(MediaType.APPLICATION_JSON)
     public RestProduct updateProduct(@PathParam("barCode") String id, @NotNull RestProduct product) throws Exception {
         product.barCode = id;
-        return productService.updateProduct(product);
+        return getServiceFactory().getProductService().updateProduct(product);
     }
 
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{barCode}")
     public Boolean deleteProduct(@PathParam("barCode") String id) throws Exception {
-        return productService.deleteProduct(id);
+        return getServiceFactory().getProductService().deleteProduct(id);
     }
 }

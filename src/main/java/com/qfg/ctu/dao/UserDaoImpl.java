@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class UserDaoImpl extends AbstractDao<User> implements UserDao {
     private Connection connection;
-    private final String _tblName = String.format("%s.%s", Constant.DB_CTU, Constant.TBL_ACCOUNTS);
+    private final String _tblName = String.format("%s", Constant.TBL_ACCOUNTS);
     private final String _sqlSelect = String.format("SELECT * FROM %s ", _tblName);
 
     public UserDaoImpl(Connection connection) {

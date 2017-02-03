@@ -15,9 +15,15 @@ import java.util.stream.Stream;
  */
 public class DBProxyHandler implements InvocationHandler {
     private Class<?> concreteClass;
+    private final String company;
 
     public DBProxyHandler(Class<?> concreteClass){
+        this(concreteClass, null);
+    }
+
+    public DBProxyHandler(Class<?> concreteClass, final String company){
         this.concreteClass = concreteClass;
+        this.company = company;
     }
 
     private void setDbConn(Object obj, Connection conn) {
@@ -47,6 +53,10 @@ public class DBProxyHandler implements InvocationHandler {
 
         if (null != mtd.getAnnotation(NeedDB.class)) {
             Connection conn = DbUtil.getConnection();
+            if (null != company) {
+                DbUtil.changeDb(conn, company);
+            }
+
             setDbConn(obj, conn);
             try {
                 conn.setAutoCommit(false);
