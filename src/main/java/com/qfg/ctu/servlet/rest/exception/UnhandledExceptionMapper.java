@@ -38,18 +38,23 @@ public class UnhandledExceptionMapper implements ExceptionMapper<Throwable> {
         }
 
         t.printStackTrace();
-        return Response.status(status).entity(new ErrMsg(errMsg)).build();
+        return Response.status(status).entity(new ErrMsg(errMsg, status)).build();
     }
 
     private static class ErrMsg {
         private String err;
+        private int status;
 
-        public ErrMsg(String msg) {
+        public ErrMsg(String msg, Response.StatusType status) {
             this.err = msg;
+            this.status = status.getStatusCode();
         }
 
         public String getErr() {
             return err;
+        }
+        public int getStatus() {
+            return status;
         }
     }
 }

@@ -6,6 +6,7 @@ import com.qfg.ctu.util.DbUtil;
 import javax.inject.Inject;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.util.stream.Stream;
@@ -63,6 +64,10 @@ public class DBProxyHandler implements InvocationHandler {
                 Object ret = method.invoke(obj, args);
                 conn.commit();
                 return ret;
+            } catch (InvocationTargetException e) {
+                DbUtil.rollbackQuietly(conn);
+                Throwable t = e.getCause();
+                throw (null == t) ? e : t;
             } catch (Exception e) {
                 DbUtil.rollbackQuietly(conn);
                 throw e;
