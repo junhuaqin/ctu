@@ -1,12 +1,8 @@
 package com.santaba.server.util.workunit;
 
-import com.santaba.common.util.DbUtil;
-
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Objects;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import static com.santaba.server.util.workunit.Functions.*;
 
@@ -75,7 +71,7 @@ public class Jobs {
 
     /**
      * Just preCheck some condition if satisfied.
-     * Could execute other work by invoke {@link PreChecker#runOnDB(Jobs.ConsumerDBProcedure)}
+     * Could execute other work by invoke {@link PreChecker#run(Jobs.ConsumerDBProcedure)}
      *
      * @return PreChecker
      */
@@ -85,55 +81,72 @@ public class Jobs {
 
     /**
      * Do something without consume anything and returns no result
-     * Could got a notification when the job complete {@link DBJobNoInputAndReturn#onCommitted(Job.Notification)}
+     * Could got a notification when the job complete {@link NoInputAndReturnJob#onComplete(Job.Notification)}
      *
-     * @return DBJobNoInputAndReturn
+     * @return NoInputAndReturnJob
      */
-    public static DBJobNoInputAndReturn runOnDBNoInputAndReturn(Jobs.DBProcedureNoReturn procedure) {
-        return new DBJobNoInputAndReturn(checkNothing(), procedure, nothingCared());
+    public static NoInputAndReturnJob runNoInputAndReturn(Jobs.DBProcedureNoReturn procedure) {
+        Objects.requireNonNull(procedure);
+        return new NoInputAndReturnJob(
+                checkNothing(),
+                (context, t) -> {
+                    procedure.apply(context.getDBConnection());
+                    return null;
+                },
+                nothingCared(),
+                ignoreAnything());
     }
 
     /**
      * Do something without consume anything and returns result
-     * Could got a notification when the job complete {@link DBJobNoInput#onCommitted(Consumer)}
+     * Could got a notification when the job complete {@link NoInputJob#onComplete(Consumer)}
      *
      * @param <R> the return type
-     * @return DBJobNoInput
+     * @return NoInputJob
      */
-    public static <R> DBJobNoInput<R> runOnDBNoInput(Jobs.DBProcedure<R> procedure) {
-        return new DBJobNoInput<>(checkNothing(), procedure, consumeNothing());
+    public static <R> NoInputJob<R> runNoInput(Jobs.DBProcedure<R> procedure) {
+        Objects.requireNonNull(procedure);
+        return new NoInputJob<>(
+                checkNothing(),
+                (context, t) -> procedure.apply(context.getDBConnection()),
+                ignoreAnything(),
+                ignoreAnything());
     }
 
     /**
      * Do something with consume anything and returns no result
-     * Could got a notification when the job complete {@link DBJobNoReturn#onCommitted(Job.Notification)}
+     * Could got a notification when the job complete {@link NoReturnJob#onComplete(Job.Notification)}
      *
      * @param <T> the parameter type
-     * @return DBJobNoReturn
+     * @return NoReturnJob
      */
-    public static <T> DBJobNoReturn<T> runOnDBNoReturn(Jobs.ConsumerDBProcedureNoReturn<T> procedure) {
-        return new DBJobNoReturn<>(checkNothing(), procedure, nothingCared());
+    public static <T> NoReturnJob<T> runNoReturn(Jobs.ConsumerDBProcedureNoReturn<T> procedure) {
+        Objects.requireNonNull(procedure);
+        return new NoReturnJob<>(
+                checkNothing(),
+                (context, t) -> {
+                    procedure.apply(context.getDBConnection(), t);
+                    return null;
+                },
+                nothingCared(),
+                ignoreAnything());
     }
 
     /**
      * Do something with consume anything and returns result
-     * Could got a notification when the job complete {@link DBJob#onCommitted(Consumer)}
+     * Could got a notification when the job complete {@link NormalJob#onComplete(Consumer)}
      *
      * @param <T> the parameter type
      * @param <R> the return type
-     * @return DBJob
+     * @return NormalJob
      */
-    public static <T, R> DBJob<T, R> runOnDB(Jobs.ConsumerDBProcedure<T, R> procedure) {
-        return new DBJob<>(checkNothing(), procedure, consumeNothing());
-    }
-
-    /**
-     * Do nothing but got a notification when the job complete
-     *
-     * @return GeneralJobNoInputAndReturn
-     */
-    public static DBJobNoInputAndReturn onCommitted(Job.Notification notification) {
-        return new DBJobNoInputAndReturn(checkNothing(), conn -> {}, notification);
+    public static <T, R> NormalJob<T, R> run(Jobs.ConsumerDBProcedure<T, R> procedure) {
+        Objects.requireNonNull(procedure);
+        return new NormalJob<>(
+                checkNothing(),
+                (context, t) -> procedure.apply(context.getDBConnection(), t),
+                ignoreAnything(),
+                ignoreAnything());
     }
 
     /*
@@ -197,46 +210,72 @@ public class Jobs {
 
     /**
      * Do something without consume anything and returns no result
-     * Could got a notification when the job complete {@link GeneralJobNoInputAndReturn#onComplete(Job.Notification)}
+     * Could got a notification when the job complete {@link NoInputAndReturnJob#onComplete(Job.Notification)}
      *
      * @return GeneralJobNoInputAndReturn
      */
-    public static GeneralJobNoInputAndReturn runNoInputAndReturn(Jobs.ProcedureNoReturn procedure) {
-        return new GeneralJobNoInputAndReturn(checkNothing(), procedure, nothingCared());
+    public static NoInputAndReturnJob runNoInputAndReturn(Jobs.ProcedureNoReturn procedure) {
+        Objects.requireNonNull(procedure);
+        return new NoInputAndReturnJob(
+                checkNothing(),
+                (context, o) -> {
+                    procedure.apply();
+                    return null;
+                },
+                nothingCared(),
+                ignoreAnything());
     }
 
     /**
      * Do something without consume anything and returns result
-     * Could got a notification when the job complete {@link GeneralJobNoInput#onComplete(Consumer)}
+     * Could got a notification when the job complete {@link NoInputJob#onComplete(Consumer)}
      *
      * @param <R> the return type
      * @return GeneralJobNoInput
      */
-    public static <R> GeneralJobNoInput<R> runNoInput(Jobs.Procedure<R> procedure) {
-        return new GeneralJobNoInput<>(checkNothing(), procedure, consumeNothing());
+    public static <R> NoInputJob<R> runNoInput(Jobs.Procedure<R> procedure) {
+        Objects.requireNonNull(procedure);
+        return new NoInputJob<>(
+                checkNothing(),
+                (context, o) -> procedure.apply(),
+                ignoreAnything(),
+                ignoreAnything());
     }
 
     /**
      * Do something with consume anything and returns no result
-     * Could got a notification when the job complete {@link GeneralJobNoReturn#onComplete(Job.Notification)}
+     * Could got a notification when the job complete {@link NoReturnJob#onComplete(Job.Notification)}
      *
      * @param <T> the parameter type
      * @return GeneralJobNoReturn
      */
-    public static <T> GeneralJobNoReturn<T> runNoReturn(Jobs.ConsumerProcedureNoReturn<T> procedure) {
-        return new GeneralJobNoReturn<>(checkNothing(), procedure, nothingCared());
+    public static <T> NoReturnJob<T> runNoReturn(Jobs.ConsumerProcedureNoReturn<T> procedure) {
+        Objects.requireNonNull(procedure);
+        return new NoReturnJob<>(
+                checkNothing(),
+                (context, t) -> {
+                    procedure.apply(t);
+                    return null;
+                },
+                nothingCared(),
+                ignoreAnything());
     }
 
     /**
      * Do something with consume anything and returns result
-     * Could got a notification when the job complete {@link GeneralJob#onComplete(Consumer)}
+     * Could got a notification when the job complete {@link NormalJob#onComplete(Consumer)}
      *
      * @param <T> the parameter type
      * @param <R> the return type
      * @return GeneralJob
      */
-    public static <T, R> GeneralJob<T, R> run(Jobs.ConsumerProcedure<T, R> procedure) {
-        return new GeneralJob<>(checkNothing(), procedure, consumeNothing());
+    public static <T, R> NormalJob<T, R> run(Jobs.ConsumerProcedure<T, R> procedure) {
+        Objects.requireNonNull(procedure);
+        return new NormalJob<>(
+                checkNothing(),
+                (context, t) -> procedure.apply(t),
+                ignoreAnything(),
+                ignoreAnything());
     }
 
     /**
@@ -244,46 +283,41 @@ public class Jobs {
      *
      * @return GeneralJobNoInputAndReturn
      */
-    public static GeneralJobNoInputAndReturn onComplete(Job.Notification notification) {
-        return new GeneralJobNoInputAndReturn(checkNothing(), () -> {}, notification);
+    public static NoInputAndReturnJob onComplete(Job.Notification notification) {
+        Objects.requireNonNull(notification);
+        return new NoInputAndReturnJob(checkNothing(), (context, o) -> o, notification, ignoreAnything());
     }
 
-    /*
-    Internal usage
+    /**
+     * Do nothing but got a notification when the job complete
+     *
+     * @return GeneralJobNoInputAndReturn
      */
+    public static NoInputAndReturnJob onError(Consumer<Exception> onError) {
+        Objects.requireNonNull(onError);
+        return new NoInputAndReturnJob(checkNothing(), (context, o) -> o, nothingCared(), onError);
+    }
 
-    static <R> R execute(Supplier<Connection> connSupplier,
-                         Consumer<Connection> connCloser,
-                         Job.PreCheck preCheck,
-                         Jobs.DBProcedure<R> procedure,
-                         Consumer<R> onCommitted) throws Exception {
-        preCheck.apply();
+    /**
+     * A wrapper to let code looks better.
+     * @param job
+     * @param <T>
+     * @param <R>
+     * @return
+     */
+    public static <T, R> NormalJob<T, R> of(NormalJob<T, R> job) {
+        return job;
+    }
 
-        Connection conn = connSupplier.get();
-        if (Objects.isNull(conn)) {
-            throw new IllegalStateException("Failed to get database connection");
-        }
-        boolean oldAutoCommit = DbUtil.setAutoCommit(conn, false);
+    public static <T> NoReturnJob<T> of(NoReturnJob<T> job) {
+        return job;
+    }
 
-        R r;
-        try {
-            r = procedure.apply(conn);
-            conn.commit();
-        }
-        catch (Exception e) {
-            DbUtil.rollbackQuietly(conn);
-            throw e;
-        }
-        finally {
-            try {
-                DbUtil.setAutoCommit(conn, oldAutoCommit);
-            }
-            catch (SQLException ignored) {
-            }
-            connCloser.accept(conn);
-        }
+    public static <R> NoInputJob<R> of(NoInputJob<R> job) {
+        return job;
+    }
 
-        onCommitted.accept(r);
-        return r;
+    public static NoInputAndReturnJob of(NoInputAndReturnJob job) {
+        return job;
     }
 }

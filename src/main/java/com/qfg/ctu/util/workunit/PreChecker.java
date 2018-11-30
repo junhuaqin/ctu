@@ -2,7 +2,7 @@ package com.santaba.server.util.workunit;
 
 import java.util.Objects;
 
-import static com.santaba.server.util.workunit.Functions.consumeNothing;
+import static com.santaba.server.util.workunit.Functions.ignoreAnything;
 import static com.santaba.server.util.workunit.Functions.nothingCared;
 
 /**
@@ -10,147 +10,132 @@ import static com.santaba.server.util.workunit.Functions.nothingCared;
  */
 public class PreChecker implements Job {
     private final PreCheck _preCheck;
-
-    public PreChecker(PreCheck preCheck) {
+    PreChecker(PreCheck preCheck) {
         Objects.requireNonNull(preCheck);
         this._preCheck = preCheck;
     }
 
-
-    public DBJobNoInputAndReturn runOnDBNoInputAndReturn(Jobs.DBProcedureNoReturn procedure) {
-        return new DBJobNoInputAndReturn(_preCheck, procedure, nothingCared());
+    public NoInputAndReturnJob runNoInputAndReturn(Jobs.DBProcedureNoReturn procedure) {
+        Objects.requireNonNull(procedure);
+        return new NoInputAndReturnJob(
+                _preCheck,
+                (context, t) -> {
+                    procedure.apply(context.getDBConnection());
+                    return null;
+                },
+                nothingCared(),
+                ignoreAnything());
     }
 
-    public <R> DBJobNoInput<R> runOnDBNoInput(Jobs.DBProcedure<R> procedure) {
-        return new DBJobNoInput<>(_preCheck, procedure, consumeNothing());
+    public <R> NoInputJob<R> runNoInput(Jobs.DBProcedure<R> procedure) {
+        Objects.requireNonNull(procedure);
+        return new NoInputJob<>(
+                _preCheck,
+                (context, t) -> procedure.apply(context.getDBConnection()),
+                ignoreAnything(),
+                ignoreAnything());
     }
 
-    public <T> DBJobNoReturn<T> runOnDBNoReturn(Jobs.ConsumerDBProcedureNoReturn<T> procedure) {
-        return new DBJobNoReturn<>(_preCheck, procedure, nothingCared());
+    public <T> NoReturnJob<T> runNoReturn(Jobs.ConsumerDBProcedureNoReturn<T> procedure) {
+        Objects.requireNonNull(procedure);
+        return new NoReturnJob<>(
+                _preCheck,
+                (context, t) -> {
+                    procedure.apply(context.getDBConnection(), t);
+                    return null;
+                },
+                nothingCared(),
+                ignoreAnything());
     }
 
-    public <T, R> DBJob<T, R> runOnDB(Jobs.ConsumerDBProcedure<T, R> procedure) {
-        return new DBJob<>(_preCheck, procedure, consumeNothing());
+    public <T, R> NormalJob<T, R> run(Jobs.ConsumerDBProcedure<T, R> procedure) {
+        Objects.requireNonNull(procedure);
+        return new NormalJob<>(
+                _preCheck,
+                (context, t) -> procedure.apply(context.getDBConnection(), t),
+                ignoreAnything(),
+                ignoreAnything());
     }
 
-    public GeneralJobNoInputAndReturn runNoInputAndReturn(Jobs.ProcedureNoReturn procedure) {
-        return new GeneralJobNoInputAndReturn(_preCheck, procedure, nothingCared());
+    public NoInputAndReturnJob runNoInputAndReturn(Jobs.ProcedureNoReturn procedure) {
+        Objects.requireNonNull(procedure);
+        return new NoInputAndReturnJob(
+                _preCheck,
+                (context, o) -> {
+                    procedure.apply();
+                    return null;
+                },
+                nothingCared(),
+                ignoreAnything());
     }
 
-    public <R> GeneralJobNoInput<R> runNoInput(Jobs.Procedure<R> procedure) {
-        return new GeneralJobNoInput<>(_preCheck, procedure, consumeNothing());
+    public <R> NoInputJob<R> runNoInput(Jobs.Procedure<R> procedure) {
+        Objects.requireNonNull(procedure);
+        return new NoInputJob<>(
+                _preCheck,
+                (context, o) -> procedure.apply(),
+                ignoreAnything(),
+                ignoreAnything());
     }
 
-    public <T> GeneralJobNoReturn<T> runNoReturn(Jobs.ConsumerProcedureNoReturn<T> procedure) {
-        return new GeneralJobNoReturn<>(_preCheck, procedure, nothingCared());
+    public <T> NoReturnJob<T> runNoReturn(Jobs.ConsumerProcedureNoReturn<T> procedure) {
+        Objects.requireNonNull(procedure);
+        return new NoReturnJob<>(
+                _preCheck,
+                (context, t) -> {
+                    procedure.apply(t);
+                    return null;
+                },
+                nothingCared(),
+                ignoreAnything());
     }
 
-    public <T, R> GeneralJob<T, R> run(Jobs.ConsumerProcedure<T, R> procedure) {
-        return new GeneralJob<>(_preCheck, procedure, consumeNothing());
+    public <T, R> NormalJob<T, R> run(Jobs.ConsumerProcedure<T, R> procedure) {
+        Objects.requireNonNull(procedure);
+        return new NormalJob<>(
+                _preCheck,
+                (context, t) -> procedure.apply(t),
+                ignoreAnything(),
+                ignoreAnything());
     }
 
     public PreChecker then(PreChecker job) {
         Objects.requireNonNull(job);
-
-        return Jobs.preCheck(() -> {
-                    preCheck();
-                    job.preCheck();
-                });
+        return new PreChecker(() -> {
+            _preCheck.apply();
+            job._preCheck.apply();
+        });
     }
 
-    public DBJobNoInputAndReturn then(DBJobNoInputAndReturn job) {
+    public NoInputAndReturnJob then(NoInputAndReturnJob job) {
         Objects.requireNonNull(job);
-
-        return Jobs.preCheck(() -> {
-                    preCheck();
-                    job.preCheck();
-                })
-                .runOnDBNoInputAndReturn(job::run)
-                .onCommitted(job::onCommitted);
+        return new NoInputAndReturnJob(trans2Identity()._then(job._impl));
     }
 
-    public GeneralJobNoInputAndReturn then(GeneralJobNoInputAndReturn job) {
+    public <R> NoInputJob<R> then(NoInputJob<R> job) {
         Objects.requireNonNull(job);
-
-        return Jobs.preCheck(() -> {
-                    preCheck();
-                    job.preCheck();
-                })
-                .runNoInputAndReturn(job::run)
-                .onComplete(job::onComplete);
+        return new NoInputJob<>(trans2Identity()._then(job._impl));
     }
 
-    public <R> DBJobNoInput<R> then(DBJobNoInput<R> job) {
+    public <T> NoReturnJob<T> then(NoReturnJob<T> job) {
         Objects.requireNonNull(job);
-
-        return Jobs.preCheck(() -> {
-                    preCheck();
-                    job.preCheck();
-                })
-                .runOnDBNoInput(job::run)
-                .onCommitted(r -> job.onCommitted());
+        return new NoReturnJob<>(this.<T>trans2Identity()._then(job._impl));
     }
 
-    public <R> GeneralJobNoInput<R> then(GeneralJobNoInput<R> job) {
+    public <T, R> NormalJob<T, R> then(NormalJob<T, R> job) {
         Objects.requireNonNull(job);
-
-        return Jobs.preCheck(() -> {
-                    preCheck();
-                    job.preCheck();
-                })
-                .runNoInput(job::run)
-                .onComplete(r -> job.onComplete());
-    }
-
-    public <T> DBJobNoReturn<T> then(DBJobNoReturn<T> job) {
-        Objects.requireNonNull(job);
-
-        return Jobs.preCheck(() -> {
-                    preCheck();
-                    job.preCheck();
-                })
-                .runOnDBNoReturn(job::run)
-                .onCommitted(job::onCommitted);
-    }
-
-    public <T> GeneralJobNoReturn<T> then(GeneralJobNoReturn<T> job) {
-        Objects.requireNonNull(job);
-
-        return Jobs.preCheck(() -> {
-                    preCheck();
-                    job.preCheck();
-                })
-                .runNoReturn(job::run)
-                .onComplete(job::onComplete);
-    }
-
-    public <T, R> DBJob<T, R> then(DBJob<T, R> job) {
-        Objects.requireNonNull(job);
-
-        return Jobs.preCheck(() -> {
-                    preCheck();
-                    job.preCheck();
-                })
-                .runOnDB(job::run)
-                .onCommitted(r -> job.onCommitted());
-    }
-
-    public <T, R> GeneralJob<T, R> then(GeneralJob<T, R> job) {
-        Objects.requireNonNull(job);
-
-        return Jobs.preCheck(() -> {
-                    preCheck();
-                    job.preCheck();
-                })
-                .run(job::run)
-                .onComplete(r -> job.onComplete());
+        return new NormalJob<>(this.<T>trans2Identity()._then(job._impl));
     }
 
     public void execute() throws Exception {
-        preCheck();
+        trans2Identity().execute(null);
     }
 
-    void preCheck() throws Exception {
-        _preCheck.apply();
+    <T> JobImpl<T, T> trans2Identity() {
+        return new JobImplLeaf<>(
+                _preCheck,
+                (context, t) -> t,
+                ignoreAnything(),
+                ignoreAnything());
     }
 }

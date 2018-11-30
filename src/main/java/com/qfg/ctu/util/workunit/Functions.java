@@ -10,7 +10,7 @@ public class Functions {
         return () -> {};
     }
 
-    public static <T> Consumer<T> consumeNothing() {
+    public static <T> Consumer<T> ignoreAnything() {
         return n -> {};
     }
 
